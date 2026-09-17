@@ -1,67 +1,47 @@
+import { Fragment } from 'react'
 import type { ReactElement } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from './Reveal'
 import BrandLogo from './BrandLogo'
-import { CONTACT_EMAIL } from '../constants'
+import { organization, socialLinks } from '../data/uuptData'
 
 /**
- * Icônes de réseaux sociaux en SVG inline (les marques ont été retirées de
- * lucide-react) — tracés officiels simplifiés, style plein cohérent entre eux.
+ * Réseaux sociaux de l'Union — pilotés par `socialLinks` (uuptData).
+ * lucide-react ne fournissant plus d'icônes de marque, les pictogrammes
+ * génériques portés par la donnée servent d'équivalents aux SVG inline
+ * du gabarit, rendus au même gabarit de 17 px.
+ * Exportés : le tiroir mobile réutilise les mêmes pastilles (voir
+ * MobileDrawer). TODO(UUPT) : les `href` de socialLinks sont des
+ * espaces réservés — renseigner les URL officielles dans uuptData.
  */
-function FacebookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
-      <path d="M13.5 21v-7.2h2.4l.4-2.8h-2.8V9.2c0-.8.3-1.4 1.5-1.4h1.4V5.3c-.7-.1-1.5-.2-2.3-.2-2.3 0-3.8 1.4-3.8 3.9V11H7.9v2.8h2.4V21h3.2Z" />
-    </svg>
-  )
-}
+export const SOCIALS: readonly { label: string; href: string; icon: () => ReactElement }[] =
+  socialLinks.map((social) => ({
+    label: social.label,
+    href: social.href,
+    icon: () => <social.icon size={17} aria-hidden="true" />,
+  }))
 
-function LinkedInIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
-      <path d="M6.9 8.6H4V20h2.9V8.6ZM5.4 7.3c1 0 1.7-.7 1.7-1.7C7.1 4.7 6.4 4 5.4 4S3.7 4.7 3.7 5.6c0 1 .7 1.7 1.7 1.7ZM10 20h2.9v-6c0-1.6.8-2.6 2.1-2.6 1.2 0 1.9.8 1.9 2.6v6H20v-6.6c0-2.9-1.6-4.3-3.8-4.3-1.5 0-2.6.8-3.3 1.9V8.6H10V20Z" />
-    </svg>
-  )
-}
+/** Colonne « Nos Axes » — les trois pages d'axe, mêmes entrées que le
+    dropdown de la Navbar (l'entrée `axes` de navLinks n'a pas de route
+    dédiée : le footer renvoie sur les pages réelles des axes). */
+const AXES_MENU: readonly { to: string; fr: string; en: string }[] = [
+  { to: '/axe-academique-culturel', fr: 'Académique & Culturel', en: 'Academic & Cultural' },
+  { to: '/axe-innovation', fr: 'Innovation', en: 'Innovation' },
+  { to: '/axe-sportif', fr: 'Sportif', en: 'Sports' },
+]
 
-function TikTokIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
-      <path d="M16.8 2.5c.5 2.4 2 3.9 4.4 4.2v3c-1.7 0-3.2-.5-4.4-1.4v6.4c0 4.4-3.3 7-6.9 7A6.4 6.4 0 0 1 3.5 15.6c0-3.9 3.2-6.6 7.2-6.2v3.1c-2.1-.5-4.1.9-4.1 3 0 1.9 1.5 3.3 3.3 3.3 2 0 3.5-1.5 3.5-3.7V2.5h3.4Z" />
-    </svg>
-  )
-}
-
-function InstagramIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
-      <path d="M12 4.4c2.5 0 2.8 0 3.8.1 2.5.1 3.7 1.3 3.8 3.8 0 1 .1 1.3.1 3.7 0 2.5 0 2.8-.1 3.8-.1 2.5-1.3 3.7-3.8 3.8-1 0-1.3.1-3.8.1-2.5 0-2.8 0-3.7-.1-2.5-.1-3.7-1.3-3.8-3.8 0-1-.1-1.3-.1-3.8 0-2.4 0-2.7.1-3.7.1-2.5 1.3-3.7 3.8-3.8 1-.1 1.3-.1 3.7-.1ZM12 2.5c-2.5 0-2.8 0-3.8.1-3.4.2-5.4 2.1-5.6 5.6-.1 1-.1 1.3-.1 3.8s0 2.8.1 3.8c.2 3.4 2.1 5.4 5.6 5.6 1 .1 1.3.1 3.8.1s2.8 0 3.8-.1c3.4-.2 5.4-2.1 5.6-5.6.1-1 .1-1.3.1-3.8s0-2.8-.1-3.8c-.2-3.4-2.1-5.4-5.6-5.6-1-.1-1.3-.1-3.8-.1Zm0 4.6a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8Zm0 8a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Zm5.1-9.4a1.1 1.1 0 1 0 0 2.3 1.1 1.1 0 0 0 0-2.3Z" />
-    </svg>
-  )
-}
-
-function GitHubIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
-      <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.7c-2.77.6-3.36-1.32-3.36-1.32-.45-1.14-1.1-1.44-1.1-1.44-.9-.62.07-.61.07-.61 1 .07 1.53 1.02 1.53 1.02.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.21-.25-4.54-1.11-4.54-4.94 0-1.09.39-1.98 1.02-2.68-.1-.25-.44-1.28.1-2.67 0 0 .84-.27 2.75 1.02A9.52 9.52 0 0 1 12 6.8c.85 0 1.71.11 2.52.33 1.9-1.29 2.74-1.02 2.74-1.02.54 1.39.2 2.42.1 2.67.64.7 1.02 1.59 1.02 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.59.69.49A10 10 0 0 0 12 2Z" />
-    </svg>
-  )
-}
-
-/**
- * Réseaux sociaux officiels (liens externes — ouverture dans un nouvel
- * onglet sur chaque <a> du rendu). Exportés : le tiroir mobile réutilise
- * les mêmes pastilles (voir MobileDrawer).
- */
-export const SOCIALS: readonly { label: string; href: string; icon: () => ReactElement }[] = [
-  { label: 'Facebook', href: 'https://www.facebook.com/share/1Axhu3WNhB/', icon: FacebookIcon },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/maxime-kante-3b7560381/', icon: LinkedInIcon },
-  { label: 'TikTok', href: 'https://www.tiktok.com/@saleel.groupe?_r=1&_t=ZS-99fiyyzt0IX', icon: TikTokIcon },
-  { label: 'Instagram', href: 'https://www.instagram.com/saleelgroupe?stkn=OTNpY3ZiM3I2Znpn', icon: InstagramIcon },
-  { label: 'GitHub', href: 'https://github.com/MAXIME-KANTE', icon: GitHubIcon },
+/** Colonne « Navigation » — reprend les destinations de `navLinks`
+    (uuptData), hors entrée Axes portée par la colonne précédente. */
+const NAV_ITEMS: readonly { to: string; fr: string; en: string }[] = [
+  { to: '/', fr: 'Accueil', en: 'Home' },
+  { to: '/a-propos', fr: 'À propos', en: 'About' },
+  { to: '/historique', fr: 'Historique', en: 'History' },
+  { to: '/partenaires', fr: 'BDE Partenaires', en: 'Partner BDEs' },
 ]
 
 export default function Footer() {
+  const year = new Date().getFullYear()
+
   return (
     <footer>
       <div className="container">
@@ -71,8 +51,15 @@ export default function Footer() {
               {/* Taille ramenée à l'échelle du header (voir .brand-logo--footer) :
                   le grand logo écrasait la hiérarchie visuelle. */}
               <BrandLogo variant="footer" />
+              {/* Mot-symbole « UUPT » sous l'emblème — blanc posé par la
+                  règle gabarit `.footer-brand .brand-copy`. */}
+              <p className="brand-copy">
+                <strong>{organization.acronym}</strong>
+              </p>
             </div>
-            <p data-lang="fr">Ensemble, construisons l'avenir ! Thiès, Sénégal.</p>
+            <p data-lang="fr">
+              {organization.tagline} ! {organization.address}.
+            </p>
             <p data-lang="en">Together, let's build the future! Thiès, Senegal.</p>
             <div className="footer-social">
               {SOCIALS.map((social) => (
@@ -90,34 +77,32 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h4 data-lang="fr">Nos pôles</h4>
-            <h4 data-lang="en">Our divisions</h4>
-            <Link to="/genie-civil" data-lang="fr">Génie Civil & BTP</Link>
-            <Link to="/genie-civil" data-lang="en">Civil Engineering</Link>
-            <Link to="/immobilier" data-lang="fr">Immobilier</Link>
-            <Link to="/immobilier" data-lang="en">Real Estate</Link>
-            <Link to="/comptabilite" data-lang="fr">Comptabilité</Link>
-            <Link to="/comptabilite" data-lang="en">Accounting</Link>
-            <Link to="/numerique" data-lang="fr">Numérique</Link>
-            <Link to="/numerique" data-lang="en">Digital</Link>
+            <h4 data-lang="fr">Nos Axes</h4>
+            <h4 data-lang="en">Our Axes</h4>
+            {AXES_MENU.map((axe) => (
+              <Fragment key={axe.to}>
+                <Link to={axe.to} data-lang="fr">{axe.fr}</Link>
+                <Link to={axe.to} data-lang="en">{axe.en}</Link>
+              </Fragment>
+            ))}
           </div>
           <div>
             <h4 data-lang="fr">Navigation</h4>
             <h4 data-lang="en">Navigation</h4>
-            <Link to="/" data-lang="fr">Accueil</Link>
-            <Link to="/" data-lang="en">Home</Link>
-            <Link to="/realisations" data-lang="fr">Réalisations</Link>
-            <Link to="/realisations" data-lang="en">Achievements</Link>
-            <Link to="/a-propos" data-lang="fr">À propos</Link>
-            <Link to="/a-propos" data-lang="en">About</Link>
-            <Link to="/contact" data-lang="fr">Contact</Link>
-            <Link to="/contact" data-lang="en">Contact</Link>
+            {NAV_ITEMS.map((item) => (
+              <Fragment key={item.to}>
+                <Link to={item.to} data-lang="fr">{item.fr}</Link>
+                <Link to={item.to} data-lang="en">{item.en}</Link>
+              </Fragment>
+            ))}
           </div>
           <div>
             <h4 data-lang="fr">Contact</h4>
             <h4 data-lang="en">Contact</h4>
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-            <a href="tel:+221786879314">+221 78 687 93 14</a>
+            <a href={`mailto:${organization.email}`}>{organization.email}</a>
+            {/* TODO(UUPT) : numéro provisoire — renseigner organization.phone
+                dans uuptData une fois la ligne officielle connue. */}
+            <a href={`tel:${organization.phone.replace(/\s+/g, '')}`}>{organization.phone}</a>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Thiès,Sénégal"
               target="_blank"
@@ -138,9 +123,12 @@ export default function Footer() {
         </div>
         <div className="footer-bottom">
           <div className="footer-copyright">
-            {/* forme juridique déjà publiée sur /mentions-legales — signal de confiance B2B */}
-            <span data-lang="fr">© 2026 SALEEL GROUPE · NINEA : 013368049 · RCCM : SH.THS.2026.A.5726</span>
-            <span data-lang="en">© 2026 SALEEL GROUPE · NINEA : 013368049 · RCCM : SH.THS.2026.A.5726</span>
+            <span data-lang="fr">
+              © {year} {organization.acronym} — {organization.name}. Tous droits réservés.
+            </span>
+            <span data-lang="en">
+              © {year} {organization.acronym} — {organization.name}. All rights reserved.
+            </span>
           </div>
           <div className="footer-legal-links">
             <Link to="/mentions-legales" data-lang="fr">Mentions légales</Link>
@@ -151,10 +139,10 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Signature typographique — « SALEEL » géant, encre blanche dégradée
+      {/* Signature typographique — « UUPT » géant, encre blanche dégradée
           sur le fond nuit (palette du site, pas de couleur importée). */}
       <Reveal as="div" className="footer-watermark" aria-hidden="true">
-        SALEEL
+        {organization.acronym}
       </Reveal>
     </footer>
   )
