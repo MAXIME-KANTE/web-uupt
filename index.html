@@ -1,35 +1,138 @@
 <!doctype html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#020617" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>UUPT – Union des Universités Privées de Thiès</title>
     <meta
       name="description"
-      content="Union des Universites Privees de Thies (UUPT) - Mouvement estudiantin inter-etablissements fonde le 26 avril 2026. Federer, innover et exceller au coeur de Thies."
+      content="UUPT, mouvement estudiantin inter-établissements de Thiès, Sénégal : académique & culturel, innovation et sport. Fédérer, promouvoir, collaborer avec les BDE."
     />
-    <meta property="og:title" content="UUPT - Union des Universites Privees de Thies" />
+    <link rel="canonical" href="https://uupt.maximekante23.workers.dev/" />
+
+    <!-- ── Open Graph + Twitter Cards (aperçus WhatsApp / LinkedIn / FB) ── -->
+    <meta property="og:title" content="UUPT – Union des Universités Privées de Thiès" />
     <meta
       property="og:description"
-      content="Federer, innover et exceller au coeur de Thies. Le pole estudiantin inter-etablissements des universites et ecoles privees de Thies."
+      content="Mouvement estudiantin inter-établissements de Thiès, Sénégal : académique & culturel, innovation et sport."
     />
     <meta property="og:type" content="website" />
-    <title>UUPT | Union des Universites Privees de Thies</title>
+    <meta property="og:locale" content="fr_SN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="UUPT" />
+    <!-- Domaine provisoire workers.dev — à re-substituer au domaine définitif. -->
+    <meta property="og:url" content="https://uupt.maximekante23.workers.dev/" />
+    <meta
+      property="og:image"
+      content="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="800" />
+    <meta
+      property="og:image:alt"
+      content="Étudiants réunis sur le parvis d'un campus universitaire"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="UUPT – Union des Universités Privées de Thiès" />
+    <meta
+      name="twitter:description"
+      content="Mouvement estudiantin inter-établissements de Thiès, Sénégal : académique & culturel, innovation et sport."
+    />
+    <meta
+      name="twitter:image"
+      content="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80"
+    />
 
-    <!-- Typographies : Manrope (titres) + Inter (texte) -->
+    <!-- ── Favicon (dame UUPT) ── -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/dame.png" />
+    <link rel="mask-icon" href="/favicon.svg" color="#f97316" />
+
+    <meta name="theme-color" content="#16213a" />
+
+    <!-- ── Polices : préchargées (non bloquantes) → zéro FOIT/écran blanc ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&family=Instrument+Serif:ital@1&display=swap"
+      rel="preload"
+      as="style"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&family=Instrument+Serif:ital@1&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&family=Instrument+Serif:ital@1&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
-    <!-- Logo (favicon) -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate icon" href="/dame.png" />
-    <link rel="apple-touch-icon" href="/dame.png" />
+    <!-- Première image du diaporama du hero (LCP) — doît refléter
+         HOME_HERO_SLIDES[0] (src/constants.ts). -->
+    <link
+      as="image"
+      fetchpriority="high"
+      href="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1920&q=80"
+      rel="preload"
+      imagesrcset="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1920&q=80 1920w"
+      imagesizes="100vw"
+    />
+    <script>
+      // Applique la langue sauvegardée avant le premier rendu pour éviter
+      // un flash de la mauvaise langue (le CSS masque via la classe .lang-en).
+      if (localStorage.getItem("uupt-lang") === "en") {
+        document.documentElement.classList.add("lang-en");
+        document.documentElement.lang = "en";
+      }
+    </script>
+    <!-- Données structurées : EducationalOrganization + WebSite (pas de
+         SearchAction — pas de recherche interne). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "EducationalOrganization",
+            "@id": "https://uupt.maximekante23.workers.dev/#organization",
+            "name": "Union des Universités Privées de Thiès",
+            "alternateName": "UUPT",
+            "description": "Mouvement estudiantin inter-établissements fédérant les universités et écoles privées de Thiès, Sénégal : académique & culturel, innovation et sport.",
+            "foundingDate": "2026-04-26",
+            "url": "https://uupt.maximekante23.workers.dev/",
+            "email": "contact@uupt.sn",
+            "logo": {
+              "@type": "ImageObject",
+              "@id": "https://uupt.maximekante23.workers.dev/#logo",
+              "url": "https://uupt.maximekante23.workers.dev/dame.png",
+              "caption": "Logo UUPT"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Thiès",
+              "addressRegion": "Thiès",
+              "addressCountry": "SN"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://uupt.maximekante23.workers.dev/#website",
+            "url": "https://uupt.maximekante23.workers.dev/",
+            "name": "UUPT – Union des Universités Privées de Thiès",
+            "inLanguage": ["fr", "en"],
+            "publisher": { "@id": "https://uupt.maximekante23.workers.dev/#organization" }
+          }
+        ]
+      }
+    </script>
   </head>
-  <body class="bg-white">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
