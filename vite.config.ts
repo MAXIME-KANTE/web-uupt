@@ -1,18 +1,28 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'node:path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// Configuration Vite : React + alias `@` vers le dossier `src`
-// pour des imports courts et lisibles (ex: `@/data/uuptData`).
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+  build: {
+    rollupOptions: {
+      output: {
+        // Découpage vendor stable : le code applicatif peut changer sans
+        // invalider le hash des chunks tiers — meilleur cache navigateur.
+        // (Vite 8 / Rolldown : codeSplitting.groups remplace manualChunks.)
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor-react',
+              test: /node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+            },
+            {
+              name: 'vendor-motion',
+              test: /node_modules[\\/](framer-motion|lenis)[\\/]/,
+            },
+          ],
+        },
+      },
     },
   },
-  server: {
-    port: 5173,
-    open: true,
-  },
-});
+})

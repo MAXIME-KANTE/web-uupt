@@ -1,0 +1,5627 @@
+/* =========================================================
+   SALEEL GROUPE — Design System v2
+   Cible : saleel-groupe.skywork.website
+   Fonts  : Inter (body) + Poppins (titres) — Google Fonts
+   =========================================================
+
+   SOMMAIRE (numéros indicatifs) :
+   - Tokens (:root) . . . . . . . . . . . . . . . . . . . ~40
+   - Reset  . . . . . . . . . . . . . . . . . . . . . . . ~95
+   - Skip link / Utility . . . . . . . . . . . . . . . . ~120
+   - Header / nav / drawer . . . . . . . . . . . . . . . ~215
+   - Hero accueil (diaporama) . . . . . . . . . . . . . ~700
+   - Heroes pages (pôles & intérieures) . . . . . . . . ~900
+   - Sections / cartes (service, valeurs, news, phases) ~1250
+   - Carrousels (showcase, mission, témoignages)  . . . ~1670
+   - Contact / formulaires / boutons / CTA . . . . . . . ~2010
+   - Footer / WhatsApp flottant . . . . . . . . . . . . ~2380
+   - Responsive (paliers 1024/768/560/480/420)  . . . . ~3020
+   - Motifs décoratifs (patterns, calques) . . . . . . . ~3150
+   - Diaspora . . . . . . . . . . . . . . . . . . . . . ~3340
+   - Motion system / stats band / galerie . . . . . . . ~4080
+   - Biens immobiliers / carte contact / preloader . .  ~4380
+   - BILINGUE (fin de fichier — ne pas déplacer)  . . . ~4860
+   - Mobile CTA / Merci / 404 / Mentions légales  . . . ~4920
+   ========================================================= */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Nav agrandie (lisibilité) : logo 84 px + liens ~15→17 px. Le seuil
+     burger passe à 1260 px (voir le bloc ≤1259.98px) : mesuré à 1200 px,
+     la nav complète réclamait déjà 1202 px — on garde ~30 px de marge
+     au premier palier où elle s'affiche. */
+  --nav-h: clamp(96px, 7vw, 112px);
+
+  /* Couleurs — l'orange devient un ACCENT (CTA, touches) ; la base est un
+     blanc chaud + encre navy : rendu plus premium, moins saturé. */
+  --primary:       #f97316;
+  --primary-dark:  #ea6c0a;
+  --primary-light: #fff7ed;
+  --primary-text:  #b45309; /* variante orange assombrie, conforme AA (4.5:1) pour du texte sur fond clair */
+  --fg:            #16213a;
+  --fg-muted:      #5c6470;
+  --fg-subtle:     #5f6b7a; /* gris lisible : ≥ 4.5:1 sur blanc */
+  --bg:            #fdfcfa;
+  --bg-alt:        #f6f4ef;
+  --bg-dark:       #0f172a;
+  --border:        #e7e4dd;
+  --sand:          #f0ebdf; /* accent chaud neutre (puces d'icônes, hover doux) */
+
+  /* Pôle colors */
+  --orange:  #f97316;
+  --blue:    #3b82f6;
+  --green:   #22c55e;
+  --purple:  #8b5cf6;
+
+  /* Typography */
+  --font-body:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-accent:  'Instrument Serif', Georgia, 'Times New Roman', serif; /* italiques éditoriales (em.ti, glyphes) */
+
+  /* Radius */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   16px;
+  --r-xl:   24px;
+  --r-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px 0 rgb(0 0 0 / .08), 0 1px 2px -1px rgb(0 0 0 / .06);
+  --shadow-md:  0 4px 16px 0 rgb(0 0 0 / .10);
+  --shadow-lg:  0 10px 32px 0 rgb(0 0 0 / .12);
+  --shadow-xl:  0 20px 60px 0 rgb(0 0 0 / .18);
+
+  /* Transitions */
+  --t-fast: 150ms ease;
+  --t-base: 250ms ease;
+  --t-slow: 400ms ease;
+
+  /* Motion (tokens consolidés ici — consommés par le motion system,
+     en bas de fichier : timeline, magnetic, galerie réalisations) */
+  --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration: 550ms;
+
+  /* Layout — fluide : le conteneur occupe les grands écrans */
+  --max-w:  clamp(1400px, 92vw, 1760px);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+    /* Typographie racine fluide : 16px sur laptop, jusqu'à 18px sur très grand écran.
+     Tous les textes et espacements en rem suivent cette échelle. */
+    font-size: clamp(16px, 15px + 0.2vw, 18px);
+  /* Mobile : pas de flash gris au tap (propriété héritée par tous les
+     éléments), ni d'inflation de texte par iOS en rotation paysage. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--fg);
+  background: var(--bg);
+  overflow-x: hidden;
+}
+img, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; background: none; border: none; font: inherit; }
+ul, ol { list-style: none; }
+input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+
+/* Typographie mobile-first : titres aux lignes équilibrées, paragraphes
+   sans lignes veuves (ignoré par les navigateurs plus anciens — pure
+   amélioration progressive). */
+h1, h2, h3, h4 { text-wrap: balance; }
+p, li, figcaption { text-wrap: pretty; }
+
+/* Anti-débordement : un mot très long (URL, e-mail) passe à la ligne au
+   lieu de pousser la mise en page hors du viewport. */
+body { overflow-wrap: break-word; }
+
+/* Très petits écrans (< 360 px) : césure automatique des paragraphes
+   (html porte lang="fr"/"en" — la césure suit la langue active). */
+@media (max-width: 360px) {
+  p, li { hyphens: auto; }
+}
+
+/* Focus clavier — anneau orange assombri : ≥3:1 sur fonds clairs ET sombres. */
+:focus-visible {
+  outline: 2px solid var(--primary-text);
+  outline-offset: 3px;
+}
+
+/* ---------- Skip link ---------- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  padding: .5rem 1rem;
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: var(--r-sm);
+  font-size: .85rem;
+  font-weight: 600;
+  z-index: 9999;
+  transition: top var(--t-fast);
+}
+.skip-link:focus { top: 1rem; }
+
+/* ---------- Utility ---------- */
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 5vw, 2.5rem);
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+/* Tiret d'accent : l'orange reste présent en signature discrète, sans
+   colorer tout le texte de section. */
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 1.5em;
+  height: 2px;
+  margin-inline-end: .6em;
+  vertical-align: .28em;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+/* ---------- Utility partagées (consommées par plusieurs composants) ---------- */
+/* En-tête de section avec un élément aligné à droite (lien, CTA compact). */
+.section-heading--split { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+/* Accroche posée sur une photo de hero (héritage .page-hero__lead en variante libre). */
+.hero-lead--onphoto { color: rgba(255, 255, 255, 0.8); margin-top: 0.75rem; max-width: 40rem; }
+/* Rangée de CTA sous le contenu d'un hero. */
+.hero-cta-row { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+/* Variante centrée (blocs CTA de fin de section, ex. page Numérique). */
+.cta-row--center { margin-top: 2rem; text-align: center; }
+/* Pastilles d'équipe par pôle (les tokens restent consommés en inline TSX). */
+.team-avatar--orange { background: var(--orange); }
+.team-avatar--blue { background: var(--blue); }
+.team-avatar--green { background: var(--green); }
+/* Titre éditorial des cartes valeurs. */
+.value-title-lg { margin-top: 0.875rem; font-size: 1.9rem; }
+/* Lien d'accent orange assombri (conforme AA sur fond clair). */
+.link-accent { color: var(--primary-text); font-weight: 600; }
+/* Note sous le bloc diaspora. */
+.diaspora-box__note { margin-top: 0.625rem; font-size: 1.05rem; line-height: 1.65; color: var(--fg-muted); }
+/* Note sous le formulaire communauté (posée sur fond sombre). */
+.community-form__note { margin-top: 0.75rem; font-size: 0.85rem; color: rgba(255, 255, 255, 0.75); }
+/* Grille de contact sans padding vertical (bloc interne de la page À propos). */
+.contact-grid--flush { padding-block: 0; }
+/* Encadré diaspora resserré et centré. */
+.diaspora-box--center { max-width: 720px; margin-inline: auto; text-align: center; }
+
+/* =====================================================
+   PAGE ENTRANCE — Canva-style
+   ===================================================== */
+.page-wrapper {
+  position: relative;
+  /* ⚠️ PAS de fill `forwards` ici : une animation d'opacité remplie après
+     coup maintient .page-wrapper en CONTEXTE D'EMPILEMENT permanent — tout
+     ce qu'il contient (header z900, tiroir z999) passait alors SOUS les
+     couches fixes de niveau racine (FAB WhatsApp z800), qui recouvraient le
+     pied du tiroir. Les keyframes finissant sur
+     l'opacité par défaut (1), le rendu est identique sans `forwards`. */
+  animation: pageFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Repli pendant le chargement paresseux d'une page intérieure : neutre,
+   invisible sous le rideau de transition, sans flash si le réseau tarde. */
+.route-loading {
+  min-height: 100vh;
+  min-height: 100svh; /* hauteur visible à l'arrivée, sans saut de barre d'URL */
+  background: var(--bg);
+}
+
+/* =====================================================
+   SCROLL SENTINEL — élément invisible pour IntersectionObserver
+   ===================================================== */
+.scroll-sentinel {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* =====================================================
+   HEADER / NAV — V2 avec comportement sticky amélioré
+   ===================================================== */
+.site-header {
+  /* Fixed en PERMANENCE : la nav reste superposée au hero (transparente,
+     texte blanc via .site-header--onhero) puis se compacte en verre clair
+     (.is-scrolled). Elle ne repasse jamais en absolute — sinon elle
+     défilait hors écran tant que le hero n'a pas quitté le viewport. */
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 900;
+  height: var(--nav-h);
+  /* Safe areas pour iOS/Android */
+  padding-top: env(safe-area-inset-top, 0);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, height 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: headerSlideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+  will-change: transform;
+}
+/* Une fois l'entrée (headerSlideDown) jouée, on libère le `transform` pour
+   que le glissement is-hidden puisse opérer (l'animation le verrouillait). */
+.site-header.is-anim-done {
+  animation: none;
+}
+/* « Hide on scroll down » : le header (logo compris) sort de l'écran.
+   La visibilité suit avec un délai égal au glissement : l'animation de
+   sortie se joue AVANT le masquage (le focus clavier ne reste plus
+   coincé hors écran). */
+.site-header.is-hidden {
+  transform: translateY(calc(-100% - env(safe-area-inset-top, 0)));
+  visibility: hidden;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.45s;
+}
+
+@keyframes headerSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- État Initial : Haut de page --- */
+.site-header--overlay {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: var(--fg);
+  box-shadow: none;
+}
+.site-header--overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Voile sombre discret, sans bande blanche. */
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.28) 0%,
+    rgba(15, 23, 42, 0) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+/* Pages SANS hero photo (merci, 404 — fonds clairs) : pas de voile nuit.
+   Les pages à hero reprennent un voile renforcé via .site-header--onhero
+   (bloc de fin de fichier, gagne par ordre source). */
+.site-header--overlay:not(.site-header--onhero)::before {
+  background: none;
+}
+
+/* --- État Scrolled : Mode Sticky ---
+   Verre clair compacté (même famille que les cartes montées du site) :
+   fond blanc chaud translucide + encre — lisible au-dessus des sections
+   claires COMME sombres. */
+.site-header.is-scrolled {
+  background: rgba(253, 252, 250, 0.87);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  color: var(--fg);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06), 0 8px 24px rgba(2, 6, 23, 0.06);
+}
+/* Hauteur interne du header corrigée pour safe-area */
+.site-header__inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 100%;
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 5vw, 2.5rem);
+  flex-wrap: nowrap;
+}
+
+/* ---------- Brand / Logo ---------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  flex-shrink: 0;
+  text-decoration: none;
+  /* Touch target minimum 44x44px sur mobile */
+}
+.brand-mark {
+  display: flex;
+  gap: 3px;
+}
+.brand-mark span {
+  display: block;
+  border-radius: 2px;
+}
+.brand-mark span:nth-child(2) { width: 14px; height: 4px; background: var(--primary); opacity: .7; }
+.brand-mark span:nth-child(3) { width: 8px;  height: 4px; background: var(--primary); opacity: .4; }
+
+.brand-copy {
+  flex-direction: column;
+  line-height: 1.1;
+}
+.brand-copy strong {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.brand-copy small {
+  font-size: .65rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+/* Couleurs selon état header */
+.site-header--overlay .brand-copy { color: var(--fg); }
+.site-header.is-scrolled .brand-copy { color: var(--fg); }
+/* ---------- Logo image ----------
+   Variantes générées (scripts/generate-assets.mjs) : logo-light.png (texte
+   blanc — fonds sombres) et logo-ink.png (couleurs réelles — fonds clairs).
+   Le lockup est PORTRAIT (275×352) : toutes les tailles sont posées en
+   HAUTEUR, la largeur suit le ratio. Aucun fond ni chip — le logo se pose
+   directement sur son hôte (le halo blanc a été retiré volontairement). */
+.brand-logo {
+  display: block;
+  height: auto;
+  object-fit: contain;
+}
+.brand-logo--header {
+  height: min(84px, calc(var(--nav-h) - 1.25rem));
+  width: auto;
+  flex-shrink: 0;
+  align-self: center;
+}
+.brand-logo--drawer { height: 84px; width: auto; }
+/* Footer : logo à l'échelle du header — le grand format écrasait la
+   hiérarchie visuelle de la colonne de marque. */
+.brand-logo--footer { height: 88px; width: auto; }
+.brand-logo--badge { height: 56px; width: auto; }
+
+/* Header : pile light/ink (BrandLogo tone="auto") — les deux variantes
+   superposées dans la même cellule grid ; l'opacité bascule selon l'état du
+   header (voile hero = light, verre clair compacté / page sans hero = ink).
+   ⚠️ grid-template-rows: 100% est INDISPENSABLE : sans piste définie, le
+   height:100% des items est cyclique (row auto ↔ contenu) et retombe à la
+   hauteur intrinsèque (352px) — le logo débordait alors sous le header. */
+.brand-logo--swap {
+  display: grid;
+  grid-template-rows: 100%;
+  height: min(84px, calc(var(--nav-h) - 1.25rem));
+  width: auto;
+  flex-shrink: 0;
+}
+.brand-logo__img {
+  grid-area: 1 / 1;
+  height: 100%;
+  width: auto;
+  max-width: none; /* neutralise le max-width:100% global des <img> */
+  object-fit: contain;
+  transition: opacity var(--t-base);
+}
+.brand-logo__img--light { opacity: 1; }
+.brand-logo__img--ink { opacity: 0; }
+/* Header compacté (verre clair) OU page sans hero photo (merci, 404) : encre. */
+.site-header.is-scrolled .brand-logo__img--light,
+.site-header:not(.site-header--onhero) .brand-logo__img--light { opacity: 0; }
+.site-header.is-scrolled .brand-logo__img--ink,
+.site-header:not(.site-header--onhero) .brand-logo__img--ink { opacity: 1; }
+/* Le logo de la navbar garde une taille fixe : ni grossissement au survol,
+   ni variation selon le viewport. */
+.brand:hover img {
+  transform: none;
+}
+
+/* ---------- Desktop Nav ---------- */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: .3125rem;
+}
+/* Liens agrandis en fluide : ~15 px à 1024 px → 17 px à partir de ~1520 px.
+   Fixe trop grand, la nav complète (7 liens + logo + actions) déborde sous
+   ~1204 px (mesuré : 1202 px requis à 1200 px) — d'où le seuil burger à
+   1260 px, qui laisse ~30 px de marge au premier palier sans burger. */
+.desktop-nav a {
+  font-family: var(--font-heading);
+  font-size: clamp(.94rem, .72rem + .35vw, 1.06rem);
+  font-weight: 600;
+  letter-spacing: .01em;
+  padding: .4375rem .6875rem;
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+  white-space: nowrap;
+  position: relative;
+}
+.desktop-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width var(--t-base), left var(--t-base);
+  border-radius: 2px;
+}
+.desktop-nav a:hover::after,
+.desktop-nav a.active::after {
+  width: 60%;
+  left: 20%;
+}
+
+/* État de base = pages sans hero photo (merci, 404, fonds clairs) : encre.
+   Les pages à hero repassent en blanc via .site-header--onhero (fin de fichier). */
+.site-header--overlay .desktop-nav a {
+  color: var(--fg);
+}
+.site-header--overlay .desktop-nav a:hover { color: var(--fg); background: rgba(15, 23, 42, .06); }
+.site-header--overlay .desktop-nav a.active { color: var(--fg); }
+
+/* Verre clair scrolled : liens encre, hover voile encre léger. */
+.site-header.is-scrolled .desktop-nav a {
+  color: var(--fg);
+}
+.site-header.is-scrolled .desktop-nav a:hover { color: var(--fg); background: rgba(15, 23, 42, .06); }
+.site-header.is-scrolled .desktop-nav a.active { color: var(--fg); }
+
+/* ---------- Header actions ---------- */
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .75rem;
+  flex-shrink: 0;
+  /* Les boutons (langue + burger) restent sur une seule ligne */
+  flex-wrap: nowrap;
+}
+.language-toggle {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: .4rem .75rem;
+  border-radius: var(--r-full);
+  border: 1.5px solid currentColor;
+  transition: opacity var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  opacity: .85;
+}
+.language-toggle:hover { opacity: 1; }
+
+.site-header--overlay .language-toggle {
+  color: var(--fg);
+  border-color: rgba(15, 23, 42, .35);
+}
+.site-header.is-scrolled .language-toggle {
+  color: var(--fg);
+  border-color: rgba(15, 23, 42, .35);
+}
+
+.header-contact {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  padding: .5625rem 1.25rem;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  color: var(--bg-dark); /* navy sur orange vif : 6.0:1 (blanc : 2.9:1) */
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.header-contact:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+/* ---- Hamburger Menu Button ---- */
+.mobile-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+  position: relative;
+}
+
+.site-header--overlay .mobile-menu-button { color: var(--fg); }
+.site-header.is-scrolled .mobile-menu-button { color: var(--fg); }
+.mobile-menu-button:hover { background: rgba(0,0,0,.07); }
+
+/* Icône hamburger par défaut (3 barres) — partagée par le bouton du header
+   (.mobile-menu-button) et le bouton de fermeture du tiroir (.drawer-close,
+   rendu en croix d'emblée via .is-open sur l'icône). */
+.hamburger-icon {
+  width: 22px;
+  height: 22px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+
+.hamburger-icon span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  position: absolute;
+  left: 0;
+}
+
+.hamburger-icon span:nth-child(1) { top: 4px; }
+.hamburger-icon span:nth-child(2) { top: 10px; }
+.hamburger-icon span:nth-child(3) { top: 16px; }
+
+/* Animation : transformation en croix (X) — l'état ouvert est porté soit
+   par l'icône elle-même (.hamburger-icon.is-open, tiroir), soit par le
+   bouton hôte (.mobile-menu-button.is-open, header). */
+.hamburger-icon.is-open span:nth-child(1),
+.mobile-menu-button.is-open .hamburger-icon span:nth-child(1) {
+  transform: rotate(45deg);
+  top: 10px;
+}
+.hamburger-icon.is-open span:nth-child(2),
+.mobile-menu-button.is-open .hamburger-icon span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-icon.is-open span:nth-child(3),
+.mobile-menu-button.is-open .hamburger-icon span:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 10px;
+}
+
+/* ---------- Mobile Drawer — feuille latérale droite ----------
+   Trois zones : tête (logo = Accueil + fermeture), corps défilant
+   (liens groupés « Nos pôles » / « Le groupe »), pied épinglé (CTA,
+   langue FR|EN, réseaux). Ouverture ample (420 ms), fermeture plus
+   courte (280 ms) : le repli ne retient jamais le geste. */
+.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  visibility: hidden;
+  pointer-events: none;
+  /* Le masquage attend la fin du repli du panneau (280 ms + marge). */
+  transition: visibility 0s linear 320ms;
+}
+.mobile-drawer.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  /* À l'ouverture, le panneau apparaît immédiatement. */
+  transition: visibility 0s;
+}
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 320ms ease;
+  cursor: default;
+}
+.mobile-drawer.is-open .drawer-backdrop { opacity: 1; }
+
+.drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, calc(100vw - 56px));
+  background: var(--bg);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* seul le corps défile (.drawer-scroll) */
+  border-radius: var(--r-xl) 0 0 var(--r-xl);
+  /* Replié : le panneau (rayon compris) sort complètement de l'écran. */
+  transform: translateX(calc(100% + var(--r-xl)));
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1); /* fermeture courte */
+}
+.mobile-drawer.is-open .drawer-panel {
+  transform: translateX(0);
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1); /* ouverture ample */
+}
+
+/* --- Tête : logo (lien Accueil) + fermeture ronde --- */
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 0.75rem 1.5rem;
+}
+.drawer-close {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  background: var(--bg);
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.drawer-close:hover { background: var(--bg-alt); border-color: var(--fg-subtle); }
+
+/* --- Corps défilant : liens groupés en pilules --- */
+.drawer-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* le scroll du tiroir n'entraîne pas la page */
+  padding: 0.25rem 1.25rem 1.25rem 1.5rem;
+}
+.drawer-group-label {
+  margin: 1.1rem 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+.drawer-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.drawer-item {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0.55rem 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--fg);
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.drawer-item:hover { background: var(--bg-alt); }
+.drawer-item:active { background: var(--bg-alt); }
+/* Page active : pastille sable + point orange à droite du libellé. */
+.drawer-item.active {
+  background: var(--sand);
+  border-color: var(--border);
+}
+.drawer-item.active::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-left: auto;
+}
+
+/* --- Pied épinglé : CTA, langue, réseaux --- */
+.drawer-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem calc(1.15rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.drawer-cta {
+  width: 100%;
+  justify-content: center;
+}
+.drawer-lang {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--r-full);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+.drawer-lang button {
+  min-height: 44px;
+  border-radius: var(--r-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  transition: background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
+}
+.drawer-lang button:hover { color: var(--fg); }
+.drawer-lang button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--fg);
+  box-shadow: var(--shadow-sm);
+}
+.drawer-social {
+  display: flex;
+  gap: 0.6rem;
+}
+.drawer-social a {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.drawer-social a:hover {
+  border-color: var(--fg-subtle);
+  color: var(--fg);
+  background: var(--bg-alt);
+}
+.drawer-social svg { display: block; }
+
+/* --- Entrée du contenu : cascade courte à l'OUVERTURE seulement (à la
+       fermeture les groupes repartent instantanément en état masqué). --- */
+.drawer-scroll > * {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.mobile-drawer.is-open .drawer-scroll > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mobile-drawer.is-open .drawer-scroll > *:nth-child(1) { transition-delay: 80ms; }
+.mobile-drawer.is-open .drawer-scroll > *:nth-child(2) { transition-delay: 150ms; }
+.mobile-drawer.is-open .drawer-scroll > *:nth-child(3) { transition-delay: 210ms; }
+.mobile-drawer.is-open .drawer-scroll > *:nth-child(4) { transition-delay: 270ms; }
+
+/* Mouvement réduit : le tiroir s'ouvre/replie sans cascade. */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-drawer,
+  .drawer-backdrop,
+  .drawer-panel,
+  .drawer-scroll > * { transition: none; }
+  .drawer-scroll > * { opacity: 1; transform: none; }
+}
+
+/* =====================================================
+   HERO — Page d'accueil
+   ===================================================== */
+.hero {
+  position: relative;
+  /* repli vh pour navigateurs sans svh */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* Contenu parfaitement centré verticalement (cible visuelle) — le
+     débordement haut du padding de .hero-content compense la nav flottante. */
+  justify-content: center;
+  color: #fff;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+}
+.hero--home {
+  /* Habillage d'attente sous le carrousel (l'image de fond statique
+     « asso » a été retirée). */
+  background: var(--bg-dark);
+}
+
+/* ----- Contenu du hero d'accueil — centré, comme la cible visuelle ----- */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  /* Réserve basse ≥ empreinte réelle de la bande .hero-stats (hauteur de
+     bande + détachement du bord + air) : les CTA ne collent jamais à la
+     bande, quelle que soit la hauteur du viewport — plus seulement ≤640 px. */
+  padding: calc(var(--nav-h) + 2rem) clamp(1rem, 5vw, 2.5rem) clamp(11rem, 20vh, 13rem);
+}
+.hero-content--center { text-align: center; }
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1.25rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+.hero-content h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2.75rem, 5.7vw, 4.9rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  /* 880 → 1080 : au format agrandi, « construisons l'avenir ! » doit tenir
+     sur SA ligne (composition 2 lignes du <br>) sans repli orphelin. */
+  max-width: 1080px;
+  margin: 0 auto 1.25rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+.hero-content p {
+  font-size: clamp(1.14rem, 1.75vw, 1.35rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 620px;
+  margin: 0 auto 2.25rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.7s both;
+}
+/* CTA du hero légèrement plus grands que le .button standard (0.9rem,
+   taille globale partagée par tout le site — on ne la touche pas). */
+.hero-actions .button { font-size: 0.97rem; }
+.hero-stats {
+  position: absolute;
+  /* Bande PLEINE LARGEUR TRANSPARENTE (rendu de la capture de référence
+     voulue par l'utilisateur) : pas de carte navy, pas de marges — la photo
+     et le voile du hero passent au travers ; seuls un filet horizontal en
+     haut et les filets verticaux entre colonnes dessinent la bande. Les
+     libellés restent lisibles sur le voile dégradé (opacité ≥ .55 sur le
+     tiers bas du hero). */
+  inset-inline: 0;
+  /* Plancher 3 rem : le bas de la bande doit rester AU-DESSUS de la carte
+     claire qui remonte sur le hero (`.scroll-sentinel + .section`,
+     margin-top -2.5rem ≈ 40 px, z-index 2) — transparente, la bande
+     laisserait sinon voir la feuille blanche au travers de son bas. */
+  bottom: clamp(3rem, 4.5vh, 3.5rem);
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.hero-stats__item {
+  min-width: 0;
+  /* Rendu de la référence : ~46 px de rentrait du texte dans chaque colonne
+     (3,4 vw à 1365 px) — le filet, lui, reste au bord de la colonne. */
+  padding: 1.35rem clamp(1.25rem, 3vw, 2.25rem) 1.3rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+}
+.hero-stats__item:last-child { border-right: 0; }
+.hero-stats__item strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3vw, 2.45rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.hero-stats__item span {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 0.86rem;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.78);
+}
+/* Même piège que .form-field label : `.hero-stats__item span` (0,1,1) battait
+   le masquage global `[data-lang='en']` (0,1,0) — libellés FR + EN empilés,
+   bande absolue gonflée débordant sur les CTA. On scope le masquage
+   (précédent : bloc .form-field). */
+.hero-stats__item span[data-lang='en'] { display: none; }
+.lang-en .hero-stats__item span[data-lang='fr'] { display: none; }
+.lang-en .hero-stats__item span[data-lang='en'] { display: block; }
+@media (max-width: 640px) {
+  /* Mobile : MÊME rendu transparent pleine largeur qu'au desktop, en
+     grille 2×2 — mais DÉTACHÉE du bord (1.75 rem) : épinglée à 0 et
+     transparente, la carte claire qui remonte (−1.5rem = 24 px ici, derrière
+     par z-index 3) se verrait AU TRAVERS de la rangée basse — texte blanc
+     sur feuille blanche. Détachée de 24 + 4 px d'air, son bas reste sur la
+     photo, comme au desktop. */
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+    bottom: 1.75rem;
+  }
+  .hero-stats__item:nth-child(2) { border-right: 0; }
+  /* Séparateur horizontal entre les deux rangées de la grille 2×2 (les
+     border-right seules ne séparaient pas les lignes). */
+  .hero-stats__item:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  }
+  /* Bande resserrée : 2 rangées + détach + réserve doivent tenir dans
+     100svh sur un téléphone courant (~820 px et plus) sans faire gonfler
+     le hero — chaque rem de padding compte ici (mesuré à 390×844). */
+  .hero-stats__item { padding-block: 0.8rem; }
+  .hero-content p { margin-bottom: 1rem; }
+  .hero-content {
+    padding-top: calc(var(--nav-h) + 1.5rem);
+    padding-bottom: 13.5rem;
+  }
+}
+
+/* Écrans larges mais BASS (laptops 1366×768…) : le bloc texte agrandi +
+   la bande détachée ne tiennent pas dans 100svh — la section gonflait et la
+   bande revenait quasi collée au bord inférieur. On compacte bande et
+   réserves pour tout rendre dans le viewport. */
+@media (min-width: 641px) and (max-height: 820px) {
+  .hero-content {
+    padding-top: calc(var(--nav-h) + 1.25rem);
+    padding-bottom: clamp(10rem, 18vh, 12rem);
+  }
+  .hero-stats { bottom: 3rem; } /* dégagée de la remontée (40 px) + air */
+  .hero-stats__item { padding-block: 1.1rem 1.25rem; }
+  .hero-stats__item strong { font-size: clamp(1.6rem, 2.4vw, 2rem); }
+  .hero-stats__item span { font-size: 0.82rem; }
+}
+
+/* Viewports bas en paysage (téléphone couché, fenêtres basses) : aucune
+   place honnête pour 4 chiffres sous le titre — on masque la bande (elle
+   reste sur tous les autres écrans) et on relâche la réserve. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero-stats { display: none; }
+  .hero-content { padding-bottom: 5rem; }
+}
+
+/* ----- Diaporama rapide (heroes pôles + cartes pôles) : fondu plus court,
+     et pas d'adoucissement « verre » dans les petits cadres ----- */
+.hero-carousel--fast .hero-slide { transition-duration: 1.1s; }
+.service-card__media .hero-slide.is-active { filter: none; }
+
+/* ----- Mouvement réduit : diaporamas figés, textes posés sans cascade ----- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { animation: none; transition: none; }
+  .hero-eyebrow,
+  .hero-content h1,
+  .hero-content p,
+  .hero-actions { animation: none; }
+}
+
+/* =====================================================
+   HERO — Carrousel d'arrière-plan automatique
+   ===================================================== */
+.hero-carousel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: -12px; /* déborde du conteneur pour masquer la frange du blur (clippé par .hero-carousel) */
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 1.8s ease-in-out, filter 1.8s ease-in-out;
+  animation: heroSlideZoom 18s ease-in-out infinite alternate;
+  will-change: opacity, transform;
+  background-color: var(--bg-dark); /* fond pendant le chargement de l'image */
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  z-index: 1;
+  filter: saturate(1.08);
+}
+
+@keyframes heroSlideZoom {
+  0%   { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Voile nuit quasi uniforme (comme la cible) : le titre reste le point
+     focal, sans zone claire au milieu du diaporama — léger renfort en bas
+     pour asseoir la bande de chiffres détachée. */
+  background: linear-gradient(
+    to bottom,
+    rgba(15,23,42,.46) 0%,
+    rgba(15,23,42,.38) 42%,
+    rgba(15,23,42,.55) 74%,
+    rgba(15,23,42,.64) 100%
+  );
+}
+
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utilisée par .page-hero-photo-bg (pages intérieures) ci-dessous */
+@keyframes heroZoom {
+  0% {
+    background-size: 105%;
+  }
+  100% {
+    background-size: 100%;
+  }
+}
+
+/* =====================================================
+   PAGE HERO (pages intérieures)
+   ===================================================== */
+.page-hero {
+  position: relative;
+  padding-top: calc(var(--nav-h) + 4rem + env(safe-area-inset-top, 0px));
+  padding-bottom: 4rem;
+  color: #fff;
+  overflow: hidden;
+  /* Immersion pleine cadre sur les pages intérieures : le hero occupe
+     exactement toute la hauteur du viewport. Repli vh puis svh (barre
+     d'URL mobile). min-height (pas height) : sur très petits écrans le
+     contenu fait grandir la section au lieu d'être coupé. */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+}
+.page-hero-photo-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--bg-dark);
+  animation: heroZoom 6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.page-hero-photo-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15,23,42,.65), rgba(15,23,42,.78));
+}
+.page-hero .container {
+  position: relative;
+  z-index: 2;
+}
+/* Le label .eyebrow est ici posé sur une photo (pas un fond clair) :
+   on force un blanc translucide, cohérent sur toutes les pages internes,
+   plutôt que l'orange par défaut qui manque de contraste et se fond
+   dans les photos aux tons chauds (chantier, brique, terre). */
+.page-hero .eyebrow {
+  color: rgba(255, 255, 255, .82);
+}
+.page-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2.15rem, 4.5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  margin-top: .75rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+.page-hero-plain {
+  /* Transparent : laisse apparaître le diaporama .hero-carousel placé
+     derrière, comme sur les pages "photo". */
+  background: var(--bg-dark);
+}
+
+/* ----- Héro des pages pôle — diaporama rapide du pôle, contenu bas-gauche.
+     Même mécanique que les pages intérieures (.page-hero + .hero-carousel) :
+     seule la hauteur (plus généreuse) et le contenu diffèrent. ----- */
+.page-hero--pole {
+  /* Immersion totale : même plein cadre que le héro d'accueil (100svh).
+     Contenu ancré en bas-gauche sur la photo. Repli vh pour les
+     navigateurs sans svh. */
+  min-height: 100vh;
+  min-height: 100svh;
+}
+.page-hero__lead {
+  max-width: 620px;
+  margin-top: 0.9rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+.page-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-hero h1,
+  .page-hero__lead,
+  .page-hero__actions { animation: none; }
+}
+
+/* Viewport courts (téléphone en paysage, fenêtres basses) : on resserre les
+   rembourrages du hero plein cadre pour garder tout le contenu visible sans
+   déclencher l'agrandissement de la section. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .page-hero {
+    padding-top: calc(var(--nav-h) + 1.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 2rem;
+  }
+}
+
+/* Ancres intra-page (CTA du hero → #poles…) : atterrissent SOUS la
+   navbar compactée fixée, jamais cachées derrière elle. */
+#poles,
+#histoire,
+#biens,
+#services,
+#faq,
+#publics {
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
+}
+
+/* ----- Diaporama partagé dans les heroes de pages intérieures -----
+   Mêmes règles que le carrousel d'accueil : les .hero-carousel / .hero-slide
+   globaux s'appliquent directement. On garantit juste l'empilement z-index. */
+.page-hero .hero-carousel { z-index: 0; }
+.page-hero .hero-overlay { z-index: 1; }
+
+/* ----- Transition premium "rising card" -----
+   La première section remonte en carte arrondie sur le hero image,
+   créant un dégradé visuel doux entre le diaporama et la zone blanche. */
+.page-hero { z-index: 1; }
+.page-hero + .section,
+.scroll-sentinel + .section {
+  position: relative;
+  z-index: 2;
+  margin-top: -2.5rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: transparent;
+}
+@media (max-width: 640px) {
+  .page-hero + .section,
+  .scroll-sentinel + .section { margin-top: -1.5rem; border-radius: 1.25rem 1.25rem 0 0; }
+}
+/* Accueil : la carte promesse (.promise-rise) a été retirée — la première
+   section (#histoire, tribale) remonte directement sur le hero. Le
+   `background: transparent` générique ci-dessus écraserait son fond tribal
+   (spécificité moindre) : on le restaure ici, tailles synchrones avec
+   .section--tribal (une valeur par couche). */
+.scroll-sentinel + .section--tribal {
+  background-color: #ffffff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23FBF9F0' stroke-width='2.5'%3E%3Cpath d='M100 100h12v-12h-24v24h36v-36h-48v48h60v-60h-72v72'/%3E%3Cpath d='M0 -22L22 0L0 22L-22 0Z'/%3E%3Cpath d='M200 -22L222 0L200 22L178 0Z'/%3E%3Cpath d='M0 178L22 200L0 222L-22 200Z'/%3E%3Cpath d='M200 178L222 200L200 222L178 200Z'/%3E%3Cpath d='M10 90L0 100L10 110'/%3E%3Cpath d='M190 90L200 100L190 110'/%3E%3Cpath d='M90 10L100 0L110 10'/%3E%3Cpath d='M90 190L100 200L110 190'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(to right, #F1F1F1 1px, transparent 1px),
+    linear-gradient(to bottom, #F1F1F1 1px, transparent 1px);
+}
+@media (max-width: 768px) {
+  .scroll-sentinel + .section--tribal { background-size: 160px 160px, 160px 160px, 160px 160px; }
+}
+@media (max-width: 480px) {
+  .scroll-sentinel + .section--tribal { background-size: 140px 140px, 140px 140px, 140px 140px; }
+}
+
+/* =====================================================
+   PROMISE STRIP — première section claire (accueil).
+   Son wrapper `.promise-rise` (posé juste après la sentinelle
+   du hero) remonte en carte claire sur le bas du diaporama ;
+   révélation du contenu par Reveal.
+   ===================================================== */
+.promise-strip {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  max-width: var(--max-w);
+  margin-inline: auto;
+}
+.promise-index {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 5.5vw, 5rem);
+  font-weight: 700;
+  /* Chiffre en contour : présence typographique sans aplat orange. */
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(15, 23, 42, 0.75);
+  line-height: 1;
+  flex-shrink: 0;
+}
+@supports not (-webkit-text-stroke: 1px #000) {
+  .promise-index { color: var(--bg-dark); }
+}
+.promise-strip__main {
+  flex: 1;
+  min-width: 0;
+}
+.promise-strip h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--bg-dark);
+}
+.promise-strip p {
+  margin: 0.85rem 0 0;
+  max-width: 52ch;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #334155;
+}
+.promise-strip__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  color: #fff;
+  flex-shrink: 0;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.promise-strip__btn:hover {
+  background: var(--primary-dark);
+  transform: scale(1.08);
+}
+.promise-strip__btn svg { width: 22px; height: 22px; }
+
+/* ----- Carte « montée » de l'accueil — le wrapper .promise-rise, posé
+     juste après la sentinelle du hero, remonte en carte claire arrondie sur
+     le bord inférieur du diaporama (même signature que les pages
+     intérieures via `.scroll-sentinel + .section`). ----- */
+.promise-rise {
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--bg);
+  box-shadow: 0 -18px 44px rgba(2, 6, 23, 0.16);
+  padding: clamp(3rem, 8vh, 5rem) clamp(1rem, 5vw, 2.5rem) clamp(2.5rem, 7vh, 4rem);
+}
+@media (max-width: 640px) {
+  .promise-rise {
+    margin-top: 0;
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+}
+
+/* ----- Chiffres clés — posés dans la carte promesse (le hero reste
+     épuré : contenu centré, pas de bande en bas). ----- */
+.promise-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(2rem, 5vw, 3rem);
+  padding-top: clamp(1.75rem, 4vw, 2.5rem);
+  border-top: 1px solid var(--border);
+}
+.promise-stats__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.promise-stats__item strong {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--bg-dark);
+  font-variant-numeric: tabular-nums;
+}
+/* Pas de `display` ici (le parent flex blockifie les spans) : une règle
+   composée battrait le masquage bilingue [data-lang] en spécificité. */
+.promise-stats__item span {
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+@media (max-width: 640px) {
+  .promise-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.5rem; }
+}
+
+/* =====================================================
+   SECTIONS
+   ===================================================== */
+.section {
+  padding-block: 5rem;
+  position: relative;
+}
+.section--alt {
+  background: transparent;
+}
+.section--mission {
+  position: relative;
+  background: transparent;
+}
+.glass-section {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  border-radius: var(--r-xl);
+  padding: 3.5rem 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+.glass-section .section-heading {
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 640px) {
+  .glass-section {
+    padding: 2rem 1rem;
+    border-radius: var(--r-lg);
+  }
+  .mission-slider {
+    min-height: 280px;
+  }
+}
+
+/* =====================================================
+   WHITE CARD — Carte blanche opaque premium
+   ===================================================== */
+/* (La cascade suffit : ce bloc vient après .glass-section dans le fichier,
+   il l'emporte sur les éléments qui portent les deux classes.) */
+.white-card-section {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: var(--r-xl);
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* =====================================================
+   SECTION HEADING — EXPERTISE INTÉGRÉE (typographie premium)
+   ===================================================== */
+.section-heading--expertise .eyebrow {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+.section-heading--expertise h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--fg);
+}
+.section-heading--expertise p {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #334155;
+  max-width: 560px;
+}
+
+/* =====================================================
+   REVEAL MAGIC — Canva-style staggered entrance
+   ===================================================== */
+.reveal-magic {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(4px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+.reveal-magic.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+/* Staggering de 100ms entre chaque élément */
+.reveal-magic[data-stagger="0"].is-visible { transition-delay: 0ms; }
+.reveal-magic[data-stagger="1"].is-visible { transition-delay: 100ms; }
+.reveal-magic[data-stagger="2"].is-visible { transition-delay: 200ms; }
+.reveal-magic[data-stagger="3"].is-visible { transition-delay: 300ms; }
+.reveal-magic[data-stagger="4"].is-visible { transition-delay: 400ms; }
+.reveal-magic[data-stagger="5"].is-visible { transition-delay: 500ms; }
+
+/* =====================================================
+   MISSION SLIDER — diaporama de textes
+   ===================================================== */
+.mission-slider {
+  position: relative;
+  min-height: 220px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.mission-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.mission-slide.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+}
+.mission-slide h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  color: var(--fg);
+  margin-top: 0.4rem;
+}
+.mission-slide__desc {
+  font-size: 1.125rem;
+  color: #334155;
+  max-width: 620px;
+  margin-top: 0.75rem;
+  line-height: 1.7;
+}
+
+/* Points de progression */
+.mission-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.mission-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--t-base), transform var(--t-base), width 0.35s ease;
+}
+.mission-dot.is-active {
+  background: var(--primary);
+  width: 28px;
+  border-radius: 4px;
+  transform: scale(1.1);
+}
+.mission-dot:hover:not(.is-active) {
+  background: var(--fg-subtle);
+}
+.section--dark {
+  background: var(--bg-dark);
+  color: #fff;
+}
+
+.section-heading {
+  margin-bottom: 3rem;
+}
+.section-heading--center { text-align: center; }
+.section-heading .eyebrow { margin-bottom: .75rem; }
+.section-heading h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+.section-heading p {
+  margin-top: .75rem;
+  font-size: 1.05rem;
+  color: var(--fg-muted);
+  max-width: 560px;
+}
+.section-heading--center p { margin-inline: auto; }
+
+/* =====================================================
+   SERVICE CARDS (Pôles)
+   ===================================================== */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  padding: 3rem clamp(1rem, 5vw, 2.5rem);
+}
+
+.service-card {
+  --card-accent: var(--primary);
+  background: var(--bg);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--r-lg);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+  position: relative;
+  overflow: hidden;
+}
+.service-card--blue { --card-accent: #2563eb; }
+.service-card--green { --card-accent: #16a34a; }
+.service-card--black { --card-accent: #111827; }
+.service-card--orange { --card-accent: var(--primary); }
+.service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.service-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.service-card__top > span {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--fg-subtle);
+}
+.service-card__top svg {
+  color: var(--card-accent);
+  transition: transform var(--t-base);
+}
+.service-card:hover .service-card__top svg {
+  transform: rotate(-10deg) scale(1.1);
+}
+.service-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+.service-card p {
+  font-size: .9rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+/* Variante monochrome (encre sur blanc) : la couleur vient des diaporamas.
+     Utilisée par la section « Expertise intégrée » (PolesExpertise). */
+.service-card--ink { --card-accent: var(--fg); }
+
+/* Mini-diaporama en tête de carte (HeroCarousel en fond). */
+.service-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--sand);
+  margin-bottom: 0.25rem;
+}
+.service-card__media .hero-slide { inset: 0; }
+
+.service-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--card-accent);
+  margin-top: .5rem;
+  transition: gap var(--t-fast);
+}
+.service-card a:hover { gap: .7rem; }
+.service-card a svg { width: 16px; height: 16px; }
+
+/* =====================================================
+   PROCESS / PHASES
+   ===================================================== */
+.phase-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  position: relative;
+}
+.phase-item {
+  background-color: #ffffff; /* Fond blanc opaque */
+  padding: 1.5rem;           /* Espace interne pour que le texte respire */
+  border-radius: var(--r-md); /* Coins légèrement arrondis */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Ombre douce pour décoller du motif */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.phase-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-slow);
+}
+.phase-item:hover::after {
+  transform: scaleX(1);
+}
+.phase-item:hover {
+  background-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+.phase-item .eyebrow { color: var(--fg-subtle); margin-bottom: .75rem; }
+.phase-item h3 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: .5rem;
+}
+.phase-item p { font-size: .875rem; color: var(--fg-muted); }
+
+/* =====================================================
+   VALUES GRID
+   ===================================================== */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.value-item {
+  padding: 2rem;
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  position: relative;
+  overflow: hidden;
+}
+.value-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: linear-gradient(to bottom, var(--primary-light), transparent);
+  transition: height var(--t-slow);
+  opacity: 0.5;
+}
+.value-item:hover::before {
+  height: 100%;
+}
+.value-item:hover {
+  border-color: var(--primary);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+.value-item h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: .5rem;
+  margin-top: 1rem;
+  position: relative;
+}
+.value-item p {
+  font-size: .875rem;
+  color: #334155;
+  position: relative;
+}
+.value-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--sand);
+  color: var(--primary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: transform var(--t-base), background var(--t-base);
+  position: relative;
+}
+.value-icon .value-svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+.value-item:hover .value-icon {
+  transform: scale(1.1);
+  background: var(--primary);
+  color: #fff;
+}
+
+/* =====================================================
+   ACTUALITÉS / NEWS CARDS
+   ===================================================== */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.news-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: transform .3s ease-in-out, box-shadow .3s ease-in-out;
+  display: grid;
+  grid-template-columns: minmax(220px, 1.1fr) minmax(0, 1.3fr);
+  position: relative;
+  min-height: 260px;
+}
+@media (max-width: 768px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+  .news-card {
+    grid-template-columns: 1fr;
+  }
+}
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.12);
+}
+.news-thumb {
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-dark);
+}
+.news-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.news-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.30) 0%,
+    rgba(15, 23, 42, 0.50) 60%,
+    rgba(15, 23, 42, 0.75) 100%
+  );
+}
+.news-card:hover .news-bg {
+  transform: scale(1.06);
+}
+.news-slideshow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.news-slideshow .ss-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  will-change: opacity;
+}
+.news-slideshow .ss-img.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+.news-card:hover .news-slideshow .ss-img {
+  transform: scale(1.06);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s ease-in-out;
+}
+.news-pole-tag {
+  position: relative;
+  z-index: 2;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--bg-dark);
+  padding: .3rem .7rem;
+  border-radius: var(--r-full);
+  transition: transform var(--t-fast);
+}
+.news-card:hover .news-pole-tag {
+  transform: scale(1.05);
+}
+.news-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  flex: 1;
+}
+.news-date { font-size: .85rem; color: #64748b; font-weight: 500; }
+.news-body h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.news-body p { font-size: 1.0625rem; color: #334155; flex: 1; }
+.news-read {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin-top: .75rem;
+  transition: gap var(--t-fast);
+}
+.news-read:hover { gap: .7rem; }
+
+/* =====================================================
+   RÉALISATIONS GRID
+   ===================================================== */
+.realisations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+/* Variante « duo » (page Génie Civil) : deux figures équilibrées côte à
+   côte, une seule colonne sur mobile. Double classe pour battre la règle
+   responsive générique posée plus bas dans le fichier. */
+.realisations-grid.realisations-grid--duo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 768px) {
+  .realisations-grid.realisations-grid--duo {
+    grid-template-columns: 1fr;
+  }
+}
+.realisation-card {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16/10;
+  margin: 0;
+}
+.realisation-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.realisation-card:hover img { transform: scale(1.06); }
+.realisation-card figcaption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 1.25rem;
+  background: linear-gradient(transparent, rgba(15,23,42,.85));
+  color: #fff;
+  transform: translateY(0);
+  transition: transform var(--t-base);
+}
+.realisation-card:hover figcaption {
+  transform: translateY(-4px);
+}
+.realisation-tag {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  background: var(--bg-dark);
+  color: #fff;
+  padding: .25rem .65rem;
+  border-radius: var(--r-full);
+  margin-bottom: .5rem;
+}
+.realisation-card figcaption p { font-size: .85rem; opacity: .85; }
+
+/* =====================================================
+   SHOWCASE CAROUSEL — Réalisations (nouvelle grille unique)
+   ===================================================== */
+.showcase-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin-inline: auto;
+  width: 100%;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2.5rem);
+  z-index: 2;
+}
+
+/* Bloc d'accent en haut à gauche → effet cadre/décalage moderne (encre,
+   l'orange étant réservé aux actions). */
+.showcase-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  min-height: 100%;
+  background-color: var(--bg-dark);
+  border-radius: 0 0 24px 0;
+  z-index: 0;
+  transform: translate(-3rem, -2rem);
+}
+
+/* Responsivité accent */
+@media (max-width: 768px) {
+  .showcase-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    transform: translate(-2rem, -1.5rem);
+    border-radius: 0;
+  }
+}
+
+
+/* Carte principale : blanc opaque, coins très arrondis, ombre profonde */
+.showcase-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  padding: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* Grille 2 colonnes desktop — texte gauche (5/12), image droite (7/12) */
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* --- En-tête de la section (titre + lien) --- */
+.showcase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.showcase-header .section-heading {
+  margin-bottom: 0;
+}
+.showcase-header .section-heading .eyebrow {
+  margin-bottom: .5rem;
+}
+
+/* --- Colonne gauche : texte & badge --- */
+.showcase-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Bloc badge/logo avec bordure verticale --- */
+.showcase-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.showcase-badge .badge-logo {
+  flex-shrink: 0;
+}
+.showcase-badge .badge-logo img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+.showcase-badge .badge-separator {
+  border-left: 2px solid #cbd5e1;
+  height: 48px;
+}
+.showcase-badge .badge-label {
+  font-family: var(--font-body);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+/* Titre principal */
+.showcase-text h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  color: var(--fg);
+}
+
+/* Sous-titre */
+.showcase-text .showcase-subtitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fg);
+}
+
+/* Paragraphe descriptif */
+.showcase-text p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #334155;
+  max-width: 540px;
+}
+
+/* --- Commandes du carrousel (dots + flèches) --- */
+.showcase-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Puces de pagination --- */
+.showcase-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.showcase-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: width 350ms ease, border-radius 350ms ease, background 350ms ease, border-color 350ms ease;
+}
+.showcase-dot.is-active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.showcase-dot:hover:not(.is-active) {
+  background: var(--fg-subtle);
+}
+
+/* Flèches de navigation discrètes --- */
+.showcase-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  transition: border-color 250ms ease, background 250ms ease, color 250ms ease, transform 250ms ease, box-shadow 250ms ease;
+}
+.showcase-arrow:hover {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+}
+.showcase-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* --- Colonne droite : image --- */
+.showcase-image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+}
+.showcase-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.showcase-image img[data-loading="true"] {
+  opacity: 0;
+  transform: scale(1.04);
+}
+.showcase-image img[data-loading="false"] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 768px) {
+  .showcase-image {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* --- Transitions du carrousel --- */
+.showcase-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 400ms ease, transform 400ms ease;
+  pointer-events: none;
+}
+.showcase-slide.is-active {
+  position: relative;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.showcase-slide.is-exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Accessibilité : reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .showcase-slide {
+    transition: none;
+  }
+  .showcase-slide.is-active {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =====================================================
+   CONTACT
+   ===================================================== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 4rem;
+  padding-block: 4rem;
+}
+.contact-grid h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-block: .75rem 1.75rem;
+}
+.contact-info-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  transition: transform var(--t-fast), background var(--t-fast);
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+  border-radius: var(--r-sm);
+}
+.contact-info-item:hover {
+  transform: translateX(4px);
+  background: var(--primary-light);
+}
+.contact-info-item:first-of-type { border-top: 1px solid var(--border); }
+.contact-info-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--sand);
+  color: var(--primary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: transform var(--t-base), background var(--t-base), color var(--t-base);
+}
+.contact-info-item:hover .contact-info-icon {
+  transform: scale(1.1);
+  background: var(--primary);
+  color: #fff;
+}
+.contact-info-item h3 {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: .25rem;
+}
+.contact-info-item p { font-size: .9rem; color: var(--fg-muted); }
+
+.diaspora-box {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--primary-light);
+  border: 1px solid rgba(249,115,22,.2);
+  border-radius: var(--r-lg);
+}
+.diaspora-box p { margin-top: .5rem; font-size: .875rem; color: var(--fg-muted); }
+
+/* =====================================================
+   FORM
+   ===================================================== */
+.form-field {
+  margin-bottom: 1.25rem;
+}
+.form-field label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: .4rem;
+}
+/* Bilingue : `(0,1,1)` de `.form-field label` battait le masquage global
+   `[data-lang='en']` (0,1,0) — les deux libellés s'affichaient empilés.
+   Spécificité renforcée pour que la variante active seule soit visible. */
+.form-field label[data-lang='en'] { display: none; }
+.lang-en .form-field label[data-lang='fr'] { display: none; }
+.lang-en .form-field label[data-lang='en'] { display: block; }
+.form-field:focus-within label {
+  color: var(--primary-text);
+}
+.form-field input,
+.form-field textarea,
+.form-field select {
+  display: block;
+  width: 100%;
+  padding: .75rem 1rem;
+  background: var(--bg-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: .95rem;
+  color: var(--fg);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast);
+}
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(249,115,22,.15);
+  background: var(--bg);
+  transform: translateY(-1px);
+}
+.form-field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+/* Select : chevron dessiné, jamais l'apparence native du système. */
+.form-field select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  cursor: pointer;
+}
+.form-field select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+/* Bouton d'envoi : l'icône glisse au survol — micro-signal de départ. */
+.button--submit .submit-icon {
+  transition: transform 0.45s var(--motion-ease-premium);
+}
+.button--submit:hover .submit-icon {
+  transform: translateX(5px) rotate(-8deg);
+}
+.form-field input:hover,
+.form-field textarea:hover,
+.form-field select:hover {
+  border-color: var(--fg-subtle);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 600;
+  padding: .75rem 1.5rem;
+  border-radius: var(--r-full);
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+/* Retour tactile : léger enfoncement au clic */
+.button:active,
+.header-contact:active,
+.showcase-arrow:active,
+.testimonial-arrow:active,
+.prop-card__wa:active {
+  transform: translateY(0) scale(.98);
+}
+.button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.15);
+  transform: translateX(-100%) skewX(-15deg);
+  transition: transform 0.4s ease;
+}
+.button:hover::after {
+  transform: translateX(100%) skewX(-15deg);
+}
+.button svg { width: 17px; height: 17px; position: relative; z-index: 1; }
+.button span { position: relative; z-index: 1; }
+
+.button--primary {
+  background: var(--primary);
+  color: var(--bg-dark); /* navy sur orange vif : 6.0:1 (blanc : 2.9:1) */
+  border: 2px solid var(--primary);
+}
+.button--primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249,115,22,.3);
+}
+.button--light {
+  background: #fff;
+  color: var(--fg);
+  border: 2px solid rgba(255,255,255,.3);
+}
+.button--light:hover {
+  background: rgba(255,255,255,.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+.button--ghost {
+  background: transparent;
+  color: rgba(255,255,255,.85);
+  border: 2px solid rgba(255,255,255,.4);
+}
+.button--ghost:hover {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.button--outline {
+  background: transparent;
+  color: var(--fg);
+  border: 2px solid rgba(15, 23, 42, 0.32);
+}
+.button--outline:hover {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);
+}
+.button--submit {
+  width: 100%;
+  justify-content: center;
+  background: var(--primary);
+  color: var(--bg-dark);
+  border: 2px solid var(--primary);
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: var(--r-md);
+}
+.button--submit:hover { background: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(249,115,22,.3); }
+.button--submit:disabled { opacity: .72; cursor: wait; transform: none; box-shadow: none; }
+.button--submit .spinner {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-right: .5rem;
+  border: 2px solid rgba(15, 23, 42, .3);
+  border-top-color: var(--bg-dark);
+  border-radius: 50%;
+  animation: spinnerRotate .7s linear infinite;
+}
+@keyframes spinnerRotate { to { transform: rotate(360deg); } }
+
+/* Erreur de validation visible (bilingue) : orange foncé atteint le ratio
+   AA 4.5:1 sur le fond clair du formulaire. */
+.form-field__error {
+  margin-top: .45rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+/* Le masquage des <span data-lang> internes est assuré par les règles
+   génériques de fin de fichier — .form-field__error lui-même ne porte
+   jamais data-lang. */
+.form-field .is-invalid {
+  border-color: var(--primary-text);
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, .12);
+}
+.form-field .is-invalid:focus {
+  border-color: var(--primary-text);
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, .18);
+}
+
+/* CTA WhatsApp direct (carte de contact et page contact). */
+.whatsapp-card {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(37, 211, 102, .08), rgba(37, 211, 102, .16));
+  border: 1px solid rgba(37, 211, 102, .35);
+  border-radius: var(--r-lg);
+}
+.whatsapp-card svg { flex-shrink: 0; width: 2rem; height: 2rem; color: #1eb85f; }
+.whatsapp-card h3 { font-size: 1rem; }
+.whatsapp-card p { margin-top: .25rem; font-size: .85rem; color: var(--fg-muted); }
+.whatsapp-card a { display: inline-flex; align-items: center; gap: .4rem; margin-top: .55rem; font-weight: 600; font-size: .9rem; color: #128c4a; }
+.form-feedback {
+  min-height: 1.5rem;
+  margin-top: .75rem;
+  color: var(--fg-muted);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   CTA BAND
+   ===================================================== */
+.cta-band {
+  position: relative;
+  padding: 5rem 2.5rem;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  text-align: center;
+  color: #fff;
+  margin-block: 2rem;
+}
+.cta-band h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4.5vw, 3.1rem);
+  font-weight: 700;
+  margin-bottom: 1.75rem;
+  position: relative;
+  z-index: 1;
+}
+.cta-band .button { position: relative; z-index: 1; }
+.cta-photo-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s ease;
+}
+.cta-band:hover .cta-photo-bg {
+  transform: scale(1.02);
+}
+.cta-photo-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Voile nuit allégé (la photo reste lisible, sans flou), lueur orangée
+     réservée au coin — l'orange reste une signature, pas un aplat. */
+  background: linear-gradient(135deg, rgba(15,23,42,.82) 45%, rgba(249,115,22,.32));
+}
+
+/* =====================================================
+   VISUAL BANNERS
+   ===================================================== */
+.visual-banner {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  height: 160px;
+  background: var(--bg-dark);
+}
+.vb-label {
+  position: absolute;
+  bottom: 1rem;
+  left: 1.5rem;
+  color: rgba(255,255,255,.6);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+footer {
+  background: var(--bg-dark);
+  color: rgba(255,255,255,.7);
+  padding-block: 4rem 2rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.footer-brand {
+  margin-bottom: 1rem;
+}
+.footer-brand img {
+  /* Lockup portrait : taille posée en hauteur, largeur auto (variante light
+     posée directement sur le navy du footer — pas de chip).
+     (Cette règle bat `.brand-logo--footer` en spécificité — c'est elle qui
+     fait foi pour la taille du logo du footer.) */
+  height: 88px;
+  width: auto;
+}
+.footer-brand .brand-copy { color: #fff; }
+
+footer h4 {
+  font-family: var(--font-heading);
+  font-size: .9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+footer h4::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--primary);
+  transition: width var(--t-base);
+}
+footer div:hover h4::after {
+  width: 40px;
+}
+footer a {
+  display: block;
+  font-size: 1rem;
+  color: rgba(255,255,255,.6);
+  margin-bottom: .6rem;
+  transition: color var(--t-fast), transform var(--t-fast);
+}
+footer a:hover { color: #fff; transform: translateX(3px); }
+footer p { font-size: .9375rem; }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,.1);
+  font-size: .875rem;
+  color: rgba(255,255,255,.55); /* mention légale lisible (≥ 4.5:1 sur navy) */
+}
+
+/* Liens légaux : le gap flex ci-dessus ne s'applique qu'entre les deux blocs
+   enfants de .footer-bottom — sans cette règle, les <Link> (inline, JSX ne
+   rend aucun espace entre eux) se collent en une seule chaîne. */
+.footer-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .375rem 1.25rem;
+}
+
+/* =====================================================
+   WHATSAPP FLOAT — positioned inline with page content
+   ===================================================== */
+.whatsapp-float {
+  position: fixed;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  right: 1.5rem;
+  z-index: 800;
+  width: 54px;
+  height: 54px;
+  /* Vert WhatsApp assombri : logo blanc ≥ 3:1 (contraste non-texte) ;
+     le #25d366 d'origine plafonnait à 1.98:1. */
+  background: #128c46;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37,211,102,.45);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), bottom var(--t-base);
+  animation: whatsappPulse 2s ease-in-out infinite;
+}
+
+@keyframes whatsappPulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(37,211,102,.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(37,211,102,.65);
+    transform: scale(1.04);
+  }
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,211,102,.55);
+  animation: none;
+}
+.whatsapp-float svg { width: 28px; height: 28px; }
+
+/* Mobile (≤640 px) : le hero couvre tout le viewport — le FAB se replie tant
+   qu'un hero est à l'écran (classe .is-parked posée par WhatsAppButton, IO sur
+   le premier .hero/.page-hero), sinon il recouvre les CTA du hero, le
+   paragraphe ou la bande de chiffres. Réapparaît passé le hero. */
+@media (max-width: 640px) {
+  .whatsapp-float {
+    transition: opacity .25s ease, transform var(--t-fast), box-shadow var(--t-fast);
+  }
+  .whatsapp-float.is-parked {
+    /* animation: none — whatsappPulse anime transform et écraserait tout
+       décalage ; un fondu d'opacité suffit. */
+    opacity: 0;
+    pointer-events: none;
+    animation: none;
+  }
+}
+
+/* =====================================================
+   PAGE VEIL — rideau de transition entre pages (Étape 15)
+   ===================================================== */
+.page-veil {
+  position: fixed;
+  inset: 0;
+  /* Au-dessus nav (900) / drawer (999) / WhatsApp (800) — sous le curseur. */
+  z-index: 1050;
+  background: var(--bg-dark);
+  clip-path: inset(100% 0% 0% 0%);
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  will-change: clip-path;
+}
+.page-veil__mark {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  padding-left: 0.45em; /* recentrage optique du letter-spacing */
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  will-change: opacity;
+}
+.page-veil__edge {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1051;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--orange) 22%,
+    var(--orange) 78%,
+    transparent 100%);
+  pointer-events: none;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-veil,
+  .page-veil__edge { display: none; }
+}
+
+/* =====================================================
+   REVEAL ANIMATIONS — Canva-style scroll
+   ===================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reveal from left */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Reveal from right */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Reveal with zoom */
+.reveal-zoom {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-zoom.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered delays for grid items — apply via nth-child */
+.service-card:nth-child(1).reveal,
+.value-item:nth-child(1).reveal,
+.news-card:nth-child(1).reveal,
+.phase-item:nth-child(1).reveal,
+.team-card:nth-child(1).reveal,
+.expertise-card:nth-child(1).reveal {
+  transition-delay: 0.05s;
+}
+.service-card:nth-child(2).reveal,
+.value-item:nth-child(2).reveal,
+.news-card:nth-child(2).reveal,
+.phase-item:nth-child(2).reveal,
+.team-card:nth-child(2).reveal,
+.expertise-card:nth-child(2).reveal {
+  transition-delay: 0.15s;
+}
+.service-card:nth-child(3).reveal,
+.value-item:nth-child(3).reveal,
+.news-card:nth-child(3).reveal,
+.phase-item:nth-child(3).reveal,
+.team-card:nth-child(3).reveal,
+.expertise-card:nth-child(3).reveal {
+  transition-delay: 0.25s;
+}
+.service-card:nth-child(4).reveal,
+.value-item:nth-child(4).reveal,
+.news-card:nth-child(4).reveal,
+.phase-item:nth-child(4).reveal,
+.team-card:nth-child(4).reveal,
+.expertise-card:nth-child(4).reveal {
+  transition-delay: 0.35s;
+}
+.service-card:nth-child(5).reveal,
+.value-item:nth-child(5).reveal,
+.news-card:nth-child(5).reveal,
+.phase-item:nth-child(5).reveal,
+.team-card:nth-child(5).reveal,
+.expertise-card:nth-child(5).reveal {
+  transition-delay: 0.45s;
+}
+.service-card:nth-child(6).reveal,
+.value-item:nth-child(6).reveal,
+.news-card:nth-child(6).reveal,
+.phase-item:nth-child(6).reveal,
+.team-card:nth-child(6).reveal,
+.expertise-card:nth-child(6).reveal {
+  transition-delay: 0.55s;
+}
+
+/* =====================================================
+   POLE PAGES — sections intérieures
+   ===================================================== */
+.detail-section {
+  padding-block: 4rem;
+}
+.detail-section + .detail-section {
+  border-top: 1px solid var(--border);
+}
+.expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+.expertise-card {
+  position: relative;
+  z-index: 1;
+  background-color: #ffffff; /* Fond blanc 100% opaque : masque le motif de fond */
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* Ombre portée légère */
+  transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+}
+.expertise-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.expertise-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg); /* Titre sombre bien net */
+  margin-bottom: .5rem;
+}
+.expertise-card p {
+  font-size: .9375rem;
+  color: #334155;
+}
+
+/* =====================================================
+   À PROPOS — Team / Timeline
+   ===================================================== */
+.about-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  padding-block: 5rem;
+}
+.about-intro img {
+  border-radius: var(--r-xl);
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  width: 100%;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.about-intro img:hover {
+  transform: scale(1.02);
+}
+.about-intro h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin-block: .75rem 1rem;
+}
+.about-intro p { color: var(--fg-muted); line-height: 1.75; }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+.team-card {
+  text-align: center;
+  padding: 2.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+}
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
+}
+.team-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: var(--r-full);
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--bg-dark);
+  overflow: hidden;
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+.team-card:hover .team-avatar {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.team-card h3 {
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  font-weight: 600;
+  margin-bottom: .35rem;
+}
+.team-role { font-size: .9rem; color: var(--fg-muted); }
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 2.5rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 6px;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-item {
+  position: relative;
+  padding: 1.25rem 0 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  transition: transform var(--t-base);
+}
+.timeline-item:hover {
+  transform: translateX(4px);
+}
+.timeline-item:last-child { border-bottom: none; }
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.55rem;
+  top: 1.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--primary);
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+.timeline-item:hover::before {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 4px var(--primary);
+}
+.timeline-item strong {
+  font-family: var(--font-heading);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.timeline-item p { font-size: 1rem; color: var(--fg-muted); margin-top: .25rem; }
+
+/* =====================================================
+   TÉMOIGNAGES CLIENTS — Carrousel
+   ===================================================== */
+.testimonials-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials-main {
+  position: relative;
+  max-width: 820px;
+  margin-inline: auto;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.testimonial-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.testimonial-slide.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
+  position: relative;
+}
+
+.testimonial-quote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--fg);
+  max-width: 720px;
+  margin-inline: auto;
+  position: relative;
+  padding: 2rem 2.5rem;
+}
+
+.testimonial-quote::before {
+  content: '\201C';
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-accent);
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  opacity: 0.25;
+  line-height: 1;
+}
+
+.testimonial-quote::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* --- Pagination / Auteurs --- */
+.testimonials-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 3rem;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color var(--t-base), background var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  text-align: left;
+  min-width: 200px;
+}
+
+.testimonial-author:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.testimonial-author.is-active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(249,115,22,.15);
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--bg-dark);
+  flex-shrink: 0;
+  transition: transform var(--t-base);
+}
+
+.testimonial-author:hover .testimonial-avatar,
+.testimonial-author.is-active .testimonial-avatar {
+  transform: scale(1.1);
+}
+
+.testimonial-author-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.testimonial-author-info strong {
+  font-family: var(--font-heading);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.testimonial-author-info small {
+  font-size: .72rem;
+  color: var(--fg-muted);
+}
+
+/* --- Flèches de navigation --- */
+.testimonials-arrows {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  margin-top: 2rem;
+}
+
+.testimonial-arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--t-base), background var(--t-base), color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+}
+
+.testimonial-arrow:hover {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249,115,22,.25);
+}
+
+.testimonial-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* --- Responsive témoignages --- */
+@media (max-width: 768px) {
+  :root { --nav-h: 100px; }
+  .site-header { height: 100px; }
+
+  .testimonials-main {
+    min-height: 260px;
+  }
+  .testimonial-quote {
+    padding: 2rem 1.25rem;
+    font-size: 1.15rem;
+  }
+  .testimonial-author {
+    min-width: 0;
+    flex: 1 1 calc(50% - .5rem);
+    padding: .6rem .9rem;
+  }
+  .testimonial-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: .95rem;
+  }
+  .testimonial-author-info strong {
+    font-size: .9rem;
+  }
+  .testimonial-author-info small {
+    font-size: .78rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonial-author {
+    flex: 1 1 100%;
+  }
+}
+
+
+/* =====================================================
+   RESPONSIVE — Mobile First
+   ===================================================== */
+
+/* --- Bureau étroit (< 1260px) : nav complète trop large une fois agrandie
+   (7 liens + logo 84 px + actions — 1202 px requis à 1200 px mesurés) —
+   burger + langue, comme tablette. --- */
+@media (max-width: 1259.98px) {
+  .desktop-nav { display: none; }
+  .header-contact { display: none; }
+  .mobile-menu-button { display: flex; }
+
+  .site-header--overlay .mobile-menu-button { color: var(--fg); }
+  .site-header.is-scrolled .mobile-menu-button { color: var(--fg); }
+}
+
+/* --- Tablette & Mobile (< 1024px) --- */
+@media (max-width: 1024px) {
+  .poles-layout { grid-template-columns: 1fr; }
+  .poles-image-wrap { display: none; }
+  .about-intro { grid-template-columns: 1fr; }
+  .about-intro img { max-height: 280px; }
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Mobile pur (< 768px) --- */
+@media (max-width: 768px) {
+  .site-header__inner {
+    /* On garde TOUJOURS une seule ligne horizontale :
+       logo à gauche, langue + burger à droite */
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    /* Padding compacté pour que tout tienne côte à côte */
+    padding: .75rem 1rem;
+    gap: .75rem;
+  }
+
+  /* Logo en taille fixe sur mobile (voir .brand-logo--header) : aucun
+     grossissement proportionnel au viewport. Lockup portrait → hauteur. */
+  .site-header__inner .brand-logo--header {
+    height: min(80px, calc(var(--nav-h) - 1rem));
+  }
+
+  .site-header__inner .brand {
+    min-height: 44px;
+    min-width: 44px;
+    padding: .125rem .375rem;
+  }
+
+  .site-footer__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .promise-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .promise-index { font-size: 2.6rem; }
+
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .phase-row { grid-template-columns: 1fr; }
+
+  /* Réduction d'animation sur mobile */
+  .hero-slide { animation: none; }
+  @keyframes heroZoom { 0%, 100% { background-size: cover; } }
+}
+
+@media (max-width: 480px) {
+  :root { --nav-h: 92px; }
+  .site-header { height: 92px; }
+
+  /* Les libellés longs peuvent passer sur deux lignes plutôt que déborder. */
+  .button { white-space: normal; }
+
+  .footer-grid { grid-template-columns: 1fr; }
+  .news-grid { grid-template-columns: 1fr; }
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Compactage renforcé pour les très petits écrans (360px) */
+  .site-header__inner {
+    padding: .625rem .75rem;
+    gap: .5rem;
+  }
+
+  .site-header__inner .brand-logo--header {
+    height: 64px;
+  }
+
+  .site-header__inner .brand {
+    min-height: 36px;
+    min-width: 36px;
+  }
+
+  .header-actions {
+    gap: .5rem;
+  }
+
+  .header-actions .language-toggle {
+    padding: .3rem .5rem;
+    font-size: .85rem;
+  }
+
+  .header-actions .mobile-menu-button {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* =====================================================
+   MOTIFS DÉCORATIFS — patterns/pattern-*.webp
+   (Aucune règle ici ne cible .site-header : le header
+   reste strictement identique sur toutes les pages.)
+   ===================================================== */
+
+/* ---------- 1. Filigrane doré — grands espaces blancs ---------- */
+/* Un seul pseudo-élément sur <body>, fixe et très discret (opacity .07
+   + mix-blend-mode: multiply pour ne "mordre" que sur le blanc).
+   Comme .section (fond neutre) n'a pas de background propre, le
+   filigrane apparaît naturellement dans ces zones ; il disparaît sous
+   .section--alt, .section--dark, le header, le footer, etc. qui ont
+   tous un fond opaque — donc rien à faire page par page. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,0.82), rgba(17,24,39,0.04) 42%, rgba(255,255,255,0.78)),
+    radial-gradient(circle at 50% 20%, rgba(17,24,39,0.08), transparent 55%);
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+/* ---------- 2. Panneaux "bento" — fond premium sans motif répétitif ---------- */
+/* Classe utilitaire à combiner avec une carte existante
+   (ex: class="value-item pattern-panel tint-orange").
+   Le fond est désormais un dégradé discret, plus professionnel. */
+.pattern-panel {
+  position: relative;
+  overflow: hidden;
+  border-color: transparent;
+  background:
+    linear-gradient(135deg, rgba(17,24,39,0.10), rgba(255,255,255,0.20)),
+    radial-gradient(circle at top left, rgba(255,255,255,0.90), transparent 38%),
+    linear-gradient(135deg, #f5f5f3 0%, #dfdfd9 100%);
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+}
+.pattern-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(165deg, rgba(15,23,42,.86), rgba(15,23,42,.68));
+  transition: background var(--t-base);
+}
+.pattern-panel > * { position: relative; z-index: 2; }
+.pattern-panel h3 { color: #fff; }
+.pattern-panel p { color: rgba(255,255,255,.92); }
+.pattern-panel .eyebrow { color: rgba(255,255,255,.78); }
+.pattern-panel .value-icon { background: rgba(255,255,255,.16); color: #fff; }
+.pattern-panel:hover { transform: translateY(-2px); }
+.pattern-panel:hover::after { background: linear-gradient(165deg, rgba(15,23,42,.78), rgba(15,23,42,.55)); }
+/* teinte au choix, une par pôle */
+.pattern-panel.tint-orange::after { background: linear-gradient(165deg, rgba(15,23,42,.82), rgba(217,83,0,.58)); }
+
+/* ---------- 3. Bannière immersive — motif Kenté coloré ---------- */
+/* Section pleine largeur autonome : <section class="pattern-banner">…</section> */
+.pattern-banner {
+  position: relative;
+  overflow: hidden;
+  padding-block: 5.5rem;
+  text-align: center;
+  color: #fff;
+}
+.pattern-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/patterns/pattern-kente.webp');
+  background-size: cover;
+  background-position: center;
+}
+.pattern-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* filtre sombre : texte et boutons blancs bien lisibles */
+  background: linear-gradient(180deg, rgba(10,8,4,.85), rgba(10,8,4,.92));
+}
+.pattern-banner .container { position: relative; z-index: 2; }
+.pattern-banner .eyebrow { color: rgba(255,255,255,.8); }
+.pattern-banner h2 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-block: .75rem 1rem;
+}
+.pattern-banner p {
+  color: rgba(255,255,255,.85);
+  max-width: 560px;
+  margin-inline: auto;
+  margin-bottom: 2rem;
+  font-size: 1.125rem;
+}
+
+/* ---------- 3b. Carrousel d'identité (bannière signature) ---------- */
+/* Diaporama de textes automatique : fade-in + slide-up, sans navigation.
+   Hauteur minimale fixe pour une stabilité parfaite du layout. */
+.identity-carousel {
+  position: relative;
+  min-height: 290px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.identity-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.identity-slide.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+  position: relative;
+}
+
+.identity-slide h2 {
+  font-size: clamp(1.7rem, 4.5vw, 2.9rem);
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+.identity-slide p {
+  margin-bottom: 0;
+}
+
+/* Responsive : la hauteur minimale s'adapte aux petits écrans */
+@media (max-width: 768px) {
+  .identity-carousel {
+    min-height: 340px;
+  }
+}
+
+@media (max-width: 480px) {
+  .identity-carousel {
+    min-height: 420px;
+  }
+}
+
+/* Accessibilité : reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-zoom,
+  .reveal-magic {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+  .hero-slide { animation: none; }
+  .whatsapp-float { animation: none; }
+}
+
+/* =====================================================
+   DIASPORA — Bloc de conversion moderne
+   ===================================================== */
+.diaspora-section {
+  position: relative;
+  padding-block: 5rem;
+}
+
+/* --- Carte principale isolée --- */
+.diaspora-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: var(--r-xl);
+  box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+  text-align: center;
+}
+
+/* --- Motif de vague SVG en filigrane animé --- */
+.diaspora-wave {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.07;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.diaspora-wave svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  animation: diasporaWave 22s linear infinite;
+}
+
+@keyframes diasporaWave {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.wave-path--1 { fill: var(--primary); }
+.wave-path--2 { fill: #fb923c; }
+.wave-path--3 { fill: #fdba74; }
+
+.diaspora-card__inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Kicker / Sur-titre --- */
+.diaspora-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem 1.35rem;
+  background: var(--primary-light);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-radius: var(--r-full);
+  color: var(--primary-text);
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.diaspora-kicker svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* --- Titre principal --- */
+.diaspora-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.7rem, 4.5vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--fg);
+  margin-bottom: 1.25rem;
+}
+
+.diaspora-title__prefix {
+  display: block;
+}
+
+/* --- Rotator de mots animés --- */
+.diaspora-rotator {
+  display: inline-block;
+  position: relative;
+  color: var(--primary-text);
+  min-width: 0.5em;
+  vertical-align: baseline;
+}
+
+.diaspora-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(14px) rotateX(90deg);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  transform-origin: center bottom;
+}
+
+.diaspora-word.is-active {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+  position: relative;
+}
+
+.diaspora-dot {
+  color: var(--primary-text);
+}
+
+/* --- Paragraphe d'accroche --- */
+.diaspora-lead {
+  font-size: 1.05rem;
+  color: var(--fg-muted);
+  max-width: 680px;
+  margin-inline: auto;
+  margin-bottom: 3rem;
+  line-height: 1.7;
+}
+
+/* --- Grille des 3 piliers de confiance --- */
+.diaspora-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.diaspora-pillar {
+  background: var(--bg-alt);
+  border-radius: var(--r-lg);
+  padding: 2rem 1.75rem;
+  border: 1px solid transparent;
+  transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+}
+
+.diaspora-pillar:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+.diaspora-pillar__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: transform var(--t-base), background var(--t-base), color var(--t-base);
+}
+
+.diaspora-pillar:hover .diaspora-pillar__icon {
+  transform: scale(1.1);
+  background: var(--primary);
+  color: #fff;
+}
+
+.diaspora-pillar__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.diaspora-pillar h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: .5rem;
+}
+
+.diaspora-pillar p {
+  font-size: 1rem;
+  color: var(--fg-muted);
+  line-height: 1.65;
+}
+
+/* --- Bouton CTA --- */
+.diaspora-cta-wrap {
+  text-align: center;
+}
+
+.diaspora-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  background: var(--primary);
+  color: var(--bg-dark);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: var(--r-full);
+  border: 2px solid var(--primary);
+  transition: background var(--t-base), color var(--t-base), border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+}
+
+/* Reflet balayant au survol — animé en transform (pas en left), donc
+   compositable sans re-layout. */
+.diaspora-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+  transform: translateX(-100%);
+  transition: transform .6s ease;
+}
+
+.diaspora-cta:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+}
+
+.diaspora-cta:hover::before {
+  transform: translateX(100%);
+}
+
+.diaspora-cta svg {
+  width: 20px;
+  height: 20px;
+  transition: transform var(--t-base);
+}
+
+.diaspora-cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .diaspora-grid {
+    grid-template-columns: 1fr;
+  }
+  .diaspora-card {
+    padding: 2rem 1.25rem;
+    border-radius: var(--r-lg);
+  }
+  .diaspora-title {
+    font-size: clamp(1.6rem, 5vw, 2.1rem);
+  }
+  .diaspora-cta {
+    font-size: 1rem;
+    padding: .9rem 1.6rem;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE CORRECTIFS — Anti-débordement mobile
+   (ajoutées pour corriger le rendu "tout petit" : les grilles
+   avec des minmax() trop larges forçaient un débordement horizontal
+   qui réduisait tout le site sur mobile.)
+   ===================================================== */
+
+/* Grilles : minmax réduit pour les écrans < 420px */
+@media (max-width: 420px) {
+  .service-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem clamp(.75rem, 3vw, 1rem);
+  }
+  .news-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .realisations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .expertise-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: .75rem;
+  }
+  .team-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .phase-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Sections : padding vertical réduit sur mobile */
+@media (max-width: 768px) {
+  .section {
+    padding-block: 3.5rem;
+  }
+  .cta-band {
+    padding: 3.5rem 1.25rem;
+    border-radius: 1.25rem;
+  }
+  .glass-section {
+    padding: 2rem 1rem;
+  }
+  .white-card-section {
+    padding: 2rem 1rem;
+  }
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .pattern-banner {
+    padding-block: 4rem;
+  }
+}
+
+/* Typographies : tailles de base ajustées sur mobile */
+@media (max-width: 768px) {
+  .promise-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .promise-index { font-size: 2.4rem; }
+  .promise-strip h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Footer : liens toujours lisibles sur mobile */
+@media (max-width: 480px) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: .5rem;
+  }
+}
+
+/* Accessibilité : clamp remplacé par des tailles fixes sur hyper-petits écrans */
+@media (max-width: 480px) {
+  .page-hero h1 {
+    font-size: 2.1rem;
+  }
+  .section-heading h2 {
+    font-size: 1.85rem;
+  }
+  .mission-slide h2 {
+    font-size: 1.6rem;
+  }
+  .identity-slide h2 {
+    font-size: 1.7rem;
+  }
+}
+
+/* =====================================================
+   ECHELLE DE LECTURE — remplissage et lisibilite
+   ===================================================== */
+.container,
+.site-header__inner,
+.promise-strip-wrap {
+  max-width: var(--max-w);
+}
+.section {
+  padding-block: 5rem;
+}
+.section-heading h2 {
+  font-size: clamp(2rem, 3.8vw, 3.25rem);
+}
+.section-heading p,
+.about-intro p,
+.mission-slide__desc,
+.showcase-text p,
+.diaspora-lead {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* =====================================================
+   ÉCHELLE ACCUEIL — typo des sections de la page d'accueil
+   légèrement agrandie (+~9 %), cohérente avec le hero dont
+   les textes ont été rehaussés. Scopée au wrapper .home-page :
+   les pages intérieures gardent l'échelle standard.
+   ===================================================== */
+.home-page .section-heading h2 {
+  font-size: clamp(2.2rem, 4.15vw, 3.55rem);
+}
+.home-page .eyebrow {
+  font-size: 0.875rem;
+}
+.home-page .section-heading p,
+.home-page .mission-slide__desc,
+.home-page .showcase-text p,
+.home-page .diaspora-lead {
+  font-size: 1.22rem;
+}
+.home-page .story-text {
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+@media (max-width: 480px) {
+  /* Échelle fixe sur hyper-petits écrans, comme la règle standard (1.85rem). */
+  .home-page .section-heading h2 { font-size: 2rem; }
+}
+.page-hero h1 {
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+}
+.service-grid,
+.expertise-grid,
+.phase-row,
+.values-grid,
+.news-grid,
+.realisations-grid,
+.team-grid {
+  gap: 2rem;
+}
+.service-card,
+.expertise-card,
+.phase-item,
+.value-item,
+.news-body {
+  padding: 2rem;
+}
+.service-card h3,
+.expertise-card h3,
+.phase-item h3,
+.value-item h3,
+.news-body h3,
+.contact-info-item h3,
+.diaspora-pillar h3 {
+  font-size: 1.35rem;
+}
+.service-card p,
+.expertise-card p,
+.phase-item p,
+.value-item p,
+.news-body p,
+.contact-info-item p,
+.diaspora-pillar p,
+.diaspora-box p {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+.button,
+.button--submit,
+.header-contact,
+.diaspora-cta {
+  font-size: 1rem;
+  min-height: 3.25rem;
+}
+.form-field label {
+  font-size: .9375rem;
+}
+.form-field input,
+.form-field textarea,
+.form-field select {
+  font-size: 1rem;
+  min-height: 3.5rem;
+}
+
+@media (max-width: 1024px) {
+  body {
+    font-size: 1rem;
+  }
+  .section {
+    padding-block: 4rem;
+  }
+  .page-hero h1 {
+    font-size: clamp(2.1rem, 6vw, 3.25rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding-block: 3rem;
+  }
+  .section-heading h2 {
+    font-size: 1.9rem;
+  }
+  .page-hero h1 {
+    font-size: 2rem;
+  }
+  .service-card,
+  .expertise-card,
+  .phase-item,
+  .value-item,
+  .news-body {
+    padding: 1.5rem;
+  }
+  .service-card h3,
+  .expertise-card h3,
+  .phase-item h3,
+  .value-item h3,
+  .news-body h3,
+  .contact-info-item h3,
+  .diaspora-pillar h3 {
+    font-size: 1.35rem;
+  }
+  .service-card p,
+  .expertise-card p,
+  .phase-item p,
+  .value-item p,
+  .news-body p,
+  .contact-info-item p,
+  .diaspora-pillar p,
+  .diaspora-box p {
+    font-size: 1.0625rem;
+  }
+}
+
+/* =====================================================
+   ARRIÈRE-PLANS ALÉATOIRES « CALQUE » (voile sunset)
+   ===================================================== */
+
+/* Section opt-in : le calque est clippé, le contenu reste au-dessus. */
+.section--backdrop {
+  position: relative;
+  overflow: hidden;
+}
+.section--backdrop .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Titres de section posés sur le voile sombre uniquement — le voile clair
+   conserve les couleurs par défaut. Scope .section-heading : les textes des
+   cartes blanches ne changent pas. */
+.section--backdrop:has(.backdrop-overlay:not(.backdrop-overlay--light)) .section-heading .eyebrow {
+  color: rgba(255,255,255,.82);
+}
+.section--backdrop:has(.backdrop-overlay:not(.backdrop-overlay--light)) .section-heading h2 {
+  color: #fff;
+}
+.section--backdrop:has(.backdrop-overlay:not(.backdrop-overlay--light)) .section-heading p {
+  color: rgba(255,255,255,.86);
+}
+
+/* Couche décorative : image NETTE (aucun flou, consigne explicite — les
+   photos des dossiers de pôles doivent rester lisibles) + voile dégradé
+   allégé ; l'accent orangé vit au-delà de 100 % du dégradé pour ne jamais
+   passer derrière le texte. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.backdrop-img {
+  position: absolute;
+  inset: -12px;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.12);
+}
+.backdrop-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15,23,42,.85) 0%,
+    rgba(15,23,42,.72) 60%,
+    rgba(249,115,22,.18) 135%
+  );
+}
+.backdrop-overlay--light {
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,.9) 0%,
+    rgba(253,250,244,.84) 55%,
+    rgba(254,215,170,.26) 130%
+  );
+}
+
+/* Cartes de prestations des pages pôles (carte claire montée sur le hero) :
+   liseré blanc et ombre franche. Les règles backdrop-* ne servent que si la
+   page pose un RandomBackdrop (Génie Civil n'en pose plus). */
+.prestations-section .backdrop-img {
+  filter: saturate(1.08);
+}
+.prestations-section .backdrop-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(15,23,42,.76) 0%,
+    rgba(15,23,42,.64) 65%,
+    rgba(249,115,22,.16) 135%
+  );
+}
+.prestations-section .expertise-grid {
+  gap: 1.5rem;
+}
+.prestations-section .expertise-card {
+  border: 2px solid #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .18);
+}
+.prestations-section .expertise-card:hover {
+  border-color: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, .24);
+}
+
+/* Bande CTA sur photo (pool calque ou image épinglée) : photo nette. */
+.cta-photo-bg--calque {
+  inset: -12px;
+  filter: saturate(1.1);
+}
+.cta-band:hover .cta-photo-bg--calque {
+  transform: scale(1.03);
+}
+
+/* =====================================================
+   GRILLE PÔLES (#poles, PolesExpertise) — toujours 2×2
+   (jamais 3+1 orpheline), 1 colonne seulement sur petit
+   mobile. Sans le padding pleine-page de .service-grid :
+   la grille vit DANS un .container qui pad déjà.
+   ===================================================== */
+.service-grid--poles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0;
+  margin-top: 2.5rem;
+}
+@media (max-width: 560px) {
+  .service-grid--poles {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Icônes des cartes pôles : suivent l'échelle fluide (rem)
+   au lieu de la taille fixe passée en prop px. */
+.service-card__top svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* =====================================================
+   ANIMATIONS 2026 — Hero « signature », révélation mot à
+   mot, cartes pôles, marquee, FAQ, communauté, watermark.
+   ===================================================== */
+
+/* ---------- Utilitaires ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.container--narrow { max-width: 860px; }
+
+/* ---------- NOTRE HISTOIRE — révélation mot à mot ---------- */
+.story-text {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 3.2vw, 2.3rem);
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fg);
+  max-width: 900px;
+  margin: 1.75rem auto 2.5rem;
+  text-align: center;
+}
+.story-cta { text-align: center; }
+
+/* ---------- MARQUEE ---------- */
+.marquee {
+  overflow: hidden;
+  padding-block: 1.1rem;
+  border-block: 1px solid var(--border);
+  background: var(--bg);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 30s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__half { display: flex; align-items: center; }
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 3rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  color: var(--fg-subtle);
+  white-space: nowrap;
+}
+.marquee__item::after {
+  content: '·';
+  margin-left: 3rem;
+  color: var(--primary);
+  font-size: 1.3em;
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---------- FAQ ---------- */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  margin-top: 2rem;
+}
+.faq-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.faq-item.is-open {
+  border-color: rgba(249, 115, 22, .45);
+  box-shadow: var(--shadow-sm);
+}
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+}
+.faq-question:hover { color: var(--primary-text); }
+.faq-question:focus-visible {
+  outline: 2px solid var(--primary-text);
+  outline-offset: -2px;
+  border-radius: var(--r-md);
+}
+.faq-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+.faq-panel { overflow: hidden; }
+.faq-panel p {
+  padding: 0 1.4rem 1.25rem;
+  color: var(--fg-muted);
+  font-size: 1.075rem;
+  line-height: 1.65;
+}
+
+/* ---------- COMMUNAUTÉ (carte sombre avant le footer) ---------- */
+.community-card {
+  max-width: 760px;
+  margin-inline: auto;
+  padding: 3rem clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(160deg, #111a33, #0b1120);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--r-xl);
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, .25);
+}
+.community-card h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.7rem, 3.8vw, 2.4rem);
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+.community-card > p {
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  color: rgba(255, 255, 255, .72);
+  font-size: 1.125rem;
+}
+.community-form {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  max-width: 480px;
+  margin-inline: auto;
+  padding: .4rem .4rem .4rem 1.25rem;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: var(--r-full);
+}
+.community-form input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font: inherit;
+  /* 1rem (≥ 16px selon la typo racine) : iOS Safari ne zoome pas
+     automatiquement au focus de l'input. */
+  font-size: 1rem;
+}
+.community-form input::placeholder { color: rgba(255, 255, 255, .5); }
+.community-form input:focus-visible {
+  outline: 2px solid var(--primary-text);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+.community-form__btn {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: var(--bg-dark); /* navy sur orange vif : icône ≥ 3:1 (blanc : 2.9:1) */
+  border: none;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.community-form__btn:hover {
+  background: var(--primary-dark);
+  transform: translateX(2px);
+}
+
+/* ---------- FOOTER — signature typographique ---------- */
+.footer-watermark {
+  margin-top: 2rem;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(4rem, 19vw, 19rem);
+  line-height: .8;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* =====================================================
+   MOTION SYSTEM — direction inspirée des sites d'agence
+   (timeline, typo mixte)
+   ===================================================== */
+
+/* ---------- Tokens motion ---------- */
+/* Tokens (--motion-ease-premium, --motion-duration, --font-accent) désormais
+   définis dans le bloc :root principal en tête de fichier. */
+
+/* ---------- Typographie mixte (accent serif italique) ---------- */
+.ti,
+.promise-strip h2 em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.06em;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+
+/* ---------- Grille éditoriale très discrète (utilitaire disponible —
+   l'accueil utilise désormais .section--tribal ci-dessous) ---------- */
+.section--gridbg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to right,
+    rgba(17, 24, 39, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: clamp(90px, 14vw, 190px) 100%;
+}
+.section--gridbg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(17, 24, 39, 0.06);
+  pointer-events: none;
+}
+
+/* ---------- Fond quadrillé « tribal » (sections cartes / listes) ----------
+   Référence : panneaux carrés (~200 px) bordés d'un trait 1 px #F1F1F1 sur
+   blanc pur, habillés d'un motif géométrique tribal — spirale carrée
+   centrale (labyrinthe), losanges d'angle (quatre quarts se rejoignent d'une
+   tuile à l'autre aux intersections de la grille), chevrons en ligne brisée
+   au milieu de chaque bord — répété en continu, ton sur ton crème #FBF9F0 à
+   la limite de la perception : la texture enrichit sans jamais concurrencer
+   le contenu. Les cartes posées dessus restent opaques (#fff) et ombrées.
+   Le hero ne porte JAMAIS cette classe. */
+.section--tribal {
+  background-color: #ffffff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23FBF9F0' stroke-width='2.5'%3E%3Cpath d='M100 100h12v-12h-24v24h36v-36h-48v48h60v-60h-72v72'/%3E%3Cpath d='M0 -22L22 0L0 22L-22 0Z'/%3E%3Cpath d='M200 -22L222 0L200 22L178 0Z'/%3E%3Cpath d='M0 178L22 200L0 222L-22 200Z'/%3E%3Cpath d='M200 178L222 200L200 222L178 200Z'/%3E%3Cpath d='M10 90L0 100L10 110'/%3E%3Cpath d='M190 90L200 100L190 110'/%3E%3Cpath d='M90 10L100 0L110 10'/%3E%3Cpath d='M90 190L100 200L110 190'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(to right, #F1F1F1 1px, transparent 1px),
+    linear-gradient(to bottom, #F1F1F1 1px, transparent 1px);
+  background-size: 200px 200px, 200px 200px, 200px 200px;
+}
+/* Densité ajustée au viewport — le SVG étant vectoriel, il reste net. */
+@media (max-width: 768px) {
+  .section--tribal { background-size: 160px 160px, 160px 160px, 160px 160px; }
+}
+@media (max-width: 480px) {
+  .section--tribal { background-size: 140px 140px, 140px 140px, 140px 140px; }
+}
+
+
+/* ---------- Timeline « Notre méthode » (voir ProcessTimeline.tsx) ---------- */
+.process-timeline {
+  --line-left: 0.6rem;
+  position: relative;
+  max-width: 720px;
+  margin-inline: auto;
+  padding-left: 2.75rem;
+}
+.process-line {
+  position: absolute;
+  left: var(--line-left);
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  border-radius: var(--r-full);
+  background: var(--border);
+  overflow: hidden;
+}
+.process-line__fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+  transform-origin: top;
+}
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vh, 3.25rem);
+}
+.process-step { position: relative; }
+.process-step__dot {
+  position: absolute;
+  left: calc(-2.75rem + var(--line-left) - 4px);
+  top: 0.3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  transition:
+    background-color var(--motion-duration) ease,
+    border-color var(--motion-duration) ease,
+    box-shadow var(--motion-duration) ease;
+}
+.process-step.is-active .process-step__dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.16);
+}
+.process-step .eyebrow,
+.process-step h3,
+.process-step p {
+  transition:
+    color var(--motion-duration) ease,
+    opacity var(--motion-duration) ease;
+}
+.process-step h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.25;
+  margin-bottom: 0.4rem;
+}
+.process-step p { color: var(--fg-muted); max-width: 52ch; }
+.process-step:not(.is-active) h3 { color: var(--fg-subtle); }
+.process-step:not(.is-active) p { opacity: 0.6; }
+
+/* ---------- Enveloppe magnétique (voir Magnetic.tsx) ---------- */
+.magnetic {
+  display: inline-flex;
+  transition: transform 0.5s var(--motion-ease-premium);
+  will-change: transform;
+}
+
+/* ---------- CIBLES TACTILES (écrans sans survol) ----------
+   Toggle de langue et points de carrousels portés à ≥ 44 px,
+   ou espacés de ≥ 24 px d'axe en axe (conforme WCAG 2.5.8). */
+@media (hover: none), (pointer: coarse) {
+  .language-toggle { min-height: 44px; min-width: 44px; }
+  .mission-dots, .showcase-dots { gap: 14px; }
+  .mission-dot, .showcase-dot { width: 14px; height: 14px; }
+  .mission-dot.is-active, .showcase-dot.is-active { width: 34px; }
+  /* Liens du footer : cibles ≥ 24px d'axe en axe (WCAG 2.5.8). */
+  footer a { padding-block: .375rem; margin-bottom: .25rem; }
+}
+
+@media (max-width: 767px) {
+  .process-timeline { padding-left: 2rem; }
+  .process-step__dot { left: calc(-2rem + var(--line-left) - 4px); }
+}
+
+/* =========================================================
+   STATS BAND — compteurs animés (À propos)
+   Bande nuit profonde : respiration sombre entre deux
+   sections claires (jamais « tout le site en noir »).
+   ========================================================= */
+.stats-band {
+  background: var(--bg-dark);
+  padding: clamp(3.5rem, 8vw, 6.5rem) 0;
+}
+.stats-band .eyebrow { color: var(--primary); }
+.stats-band__heading { margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.stats-band__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+.stats-band__item {
+  padding-left: 1.25rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+.stats-band__figure {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  font-variant-numeric: tabular-nums; /* les chiffres ne « sautent » pas en comptant */
+}
+.stats-band__label {
+  display: block;
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+@media (max-width: 860px) {
+  .stats-band__row { grid-template-columns: repeat(2, 1fr); row-gap: 2.25rem; }
+}
+@media (max-width: 480px) {
+  .stats-band__row { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   REALISATIONS GALLERY — grille éditoriale asymétrique
+   ========================================================= */
+.rg { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+.rg__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2rem);
+}
+.rg__item { margin: 0; }
+.rg__item--wide { grid-column: 1 / span 7; }
+.rg__item--tall { grid-column: 9 / span 4; margin-top: clamp(3rem, 14vh, 9rem); }
+.rg__item--tall + .rg__item--tall { grid-column: 1 / span 4; margin-top: clamp(2rem, 7vh, 4.5rem); }
+.rg__item--wide + .rg__item--tall { margin-top: clamp(3rem, 14vh, 9rem); }
+.rg__item--mid { grid-column: span 5; margin-top: clamp(2rem, 7vh, 4.5rem); }
+.rg__item--mid:nth-of-type(5) { grid-column: 2 / span 5; }
+.rg__item--mid:nth-of-type(6) { grid-column: 8 / span 5; margin-top: clamp(3rem, 12vh, 7rem); }
+
+.rg__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--bg-alt);
+}
+.rg__item--wide .rg__media { aspect-ratio: 16 / 10; }
+.rg__item--tall .rg__media { aspect-ratio: 4 / 5; }
+.rg__item--mid .rg__media { aspect-ratio: 3 / 2; }
+/* L'image déborde de 6 % en haut et en bas : la parallaxe ±5 % glisse
+   dans cette réserve, les bords ne se découvrent jamais. */
+.rg__media img {
+  position: absolute;
+  top: -6%;
+  left: 0;
+  width: 100%;
+  height: 112%;
+  object-fit: cover;
+  will-change: transform;
+  transition: scale 0.7s var(--motion-ease-premium);
+}
+.rg__media:hover img { scale: 1.035; }
+
+.rg__caption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+.rg__index {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--primary-text);
+  flex-shrink: 0;
+}
+.rg__meta { display: flex; flex-direction: column; gap: 0.3rem; }
+.rg__tag {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.rg__title { font-size: 1.2rem; line-height: 1.35; }
+.rg__date { font-size: 0.9rem; color: var(--fg-muted); }
+
+@media (max-width: 860px) {
+  .rg__item--wide,
+  .rg__item--tall,
+  .rg__item--tall + .rg__item--tall,
+  .rg__item--mid,
+  .rg__item--mid:nth-of-type(5),
+  .rg__item--mid:nth-of-type(6) {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+  .rg__grid { row-gap: 2.75rem; }
+  .rg__item--wide .rg__media,
+  .rg__item--mid .rg__media { aspect-ratio: 16 / 10; }
+  .rg__item--tall .rg__media { aspect-ratio: 4 / 3; }
+}
+
+/* ---------- Mouvement réduit : motion system ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .magnetic { transition: none; }
+  .process-step .eyebrow,
+  .process-step h3,
+  .process-step p,
+  .process-step__dot { transition: none; }
+  .process-step:not(.is-active) h3 { color: var(--fg); }
+  .process-step:not(.is-active) p { opacity: 1; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+  .faq-question { padding: 1rem 1.1rem; }
+  .faq-panel p { padding: 0 1.1rem 1.1rem; }
+}
+
+/* ---------- Mouvement réduit ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+  .marquee { overflow-x: auto; }
+}
+
+/* =====================================================
+   BIENS IMMOBILIERS — cartes (données d'exemple : data/properties.ts)
+   ===================================================== */
+.prop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+.prop-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.prop-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+.prop-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.prop-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.prop-card:hover .prop-card__media img { transform: scale(1.06); }
+.prop-card__type {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 1;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--r-full);
+  background: rgba(15, 23, 42, 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.prop-card__badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.prop-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.5rem 1.5rem 1.6rem;
+  flex: 1;
+}
+.prop-card__price {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--bg-dark);
+  font-variant-numeric: tabular-nums;
+}
+.prop-card h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.prop-card__loc {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--fg-muted);
+}
+.prop-card__loc svg { color: var(--primary-text); flex-shrink: 0; }
+.prop-card__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  margin: 0.5rem 0 0;
+  padding: 0.9rem 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+.prop-card__specs li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.84rem;
+  color: var(--fg);
+  font-weight: 500;
+}
+.prop-card__specs svg { color: var(--fg-subtle); }
+.prop-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+.prop-card__cta {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  border-radius: var(--r-full);
+  border: 2px solid rgba(15, 23, 42, 0.3);
+  color: var(--fg);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+}
+.prop-card__cta:hover { background: var(--fg); border-color: var(--fg); color: #fff; }
+.prop-card__wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  /* Vert WhatsApp assombri (même choix que .whatsapp-float) : logo blanc
+     ≥ 3:1 pour le contraste non-texte — le #25d366 plafonnait à 1.98:1. */
+  background: #128c46;
+  color: #fff;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.prop-card__wa:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(18, 140, 70, 0.4); }
+.prop-grid-cta { text-align: center; margin-top: 2.75rem; }
+
+/* Stagger d'apparition des cartes (même logique que .news-card). */
+.prop-card:nth-child(1).reveal { transition-delay: 0.05s; }
+.prop-card:nth-child(2).reveal { transition-delay: 0.13s; }
+.prop-card:nth-child(3).reveal { transition-delay: 0.21s; }
+.prop-card:nth-child(4).reveal { transition-delay: 0.29s; }
+.prop-card:nth-child(5).reveal { transition-delay: 0.37s; }
+.prop-card:nth-child(6).reveal { transition-delay: 0.45s; }
+
+/* =====================================================
+   PROFILS ACCOMPAGNÉS (pôle comptabilité) — icône sur pastille sable
+   ===================================================== */
+.who-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--sand);
+  color: var(--primary-text);
+  margin-bottom: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+  .prop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .prop-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* =====================================================
+   FOOTER — réseaux sociaux (FB, LinkedIn, TikTok, Instagram)
+   ===================================================== */
+.footer-social {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.82);
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast),
+    transform var(--t-fast);
+}
+.footer-social a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.footer-social svg { display: block; }
+
+/* Cibles tactiles : pastilles sociales portées à 44 px sur écrans sans
+   survol (posé APRÈS la règle 40 px ci-dessus : même spécificité, ordre
+   source décisif). */
+@media (hover: none), (pointer: coarse) {
+  .footer-social a { width: 44px; height: 44px; }
+}
+
+/* =====================================================
+   CARTE DE CONTACT — volet marque / volet formulaire
+   Mobile : le volet de marque devient un bandeau compact.
+   ===================================================== */
+.contact-card {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  background: #fff;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  max-width: 1080px;
+  margin-inline: auto;
+}
+.contact-card__brand {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  /* Palette du site : nuit de l'encre → profondeur — l'orange reste aux CTA. */
+  background: linear-gradient(168deg, #1d2a4d 0%, var(--bg-dark) 55%, #0b1120 100%);
+  color: #fff;
+}
+.contact-card__wave {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  width: 100%;
+  height: 38%;
+  pointer-events: none;
+}
+/* Le contenu (logo, textes, coordonnées) vit au-dessus du diaporama et de
+   la vague — on exclut ces deux couches décoratives du relèvement. */
+.contact-card__brand > *:not(.contact-card__wave):not(.contact-card__slides) {
+  position: relative;
+  z-index: 1;
+}
+/* Diaporama des pôles : couche la plus basse du volet, sous un voile nuit. */
+.contact-card__slides {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.contact-card__slides::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    168deg,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(15, 23, 42, 0.68) 52%,
+    rgba(15, 23, 42, 0.84) 100%
+  );
+}
+.contact-card__logo-wrap { display: flex; }
+/* Variante light posée directement sur le dégradé navy — pas de chip. */
+.contact-card__logo {
+  height: 112px;
+  width: auto;
+}
+.contact-card__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+.contact-card__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.contact-card__text {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 42ch;
+}
+.contact-card__channels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+  font-size: 0.92rem;
+}
+.contact-card__channels li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.contact-card__channels svg { color: var(--primary); flex-shrink: 0; }
+.contact-card__channels a { color: inherit; }
+.contact-card__channels a:hover { color: #fff; }
+
+.contact-card__form {
+  padding: clamp(2rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+}
+.contact-card__form-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  font-weight: 700;
+  margin: 0.35rem 0 1.5rem;
+}
+.contact-card__form .form-field { margin-bottom: 1rem; }
+.contact-card__privacy {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  margin-top: 0.6rem;
+}
+.contact-card__google { margin-top: 1.4rem; }
+.contact-card__google-or {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--fg-subtle);
+  font-size: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+.contact-card__google-or::before,
+.contact-card__google-or::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+.contact-card__google-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 48px;
+  border: 1.5px solid rgba(15, 23, 42, 0.28);
+  border-radius: var(--r-md);
+  background: #fff;
+  color: var(--fg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+}
+.contact-card__google-btn:hover {
+  background: var(--bg-alt);
+  border-color: rgba(15, 23, 42, 0.45);
+  transform: translateY(-1px);
+}
+.contact-card__google-note {
+  min-height: 1.4rem;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+@media (max-width: 820px) {
+  /* Bandeau compact : logo + accroche seulement (le détail vit sous la carte). */
+  .contact-card { grid-template-columns: 1fr; }
+  .contact-card__brand {
+    gap: 0.55rem;
+    padding: 1.75rem 1.5rem 2.1rem;
+  }
+  .contact-card__logo { height: 84px; }
+  .contact-card__title { font-size: 1.45rem; }
+  .contact-card__text,
+  .contact-card__channels { display: none; }
+  .contact-card__brand > .whatsapp-card { display: none; }
+  .contact-card__wave { height: 46%; }
+  .contact-card__form { padding: 1.6rem 1.5rem 2rem; }
+}
+
+/* Coordonnées détaillées sous la carte (page Contact) */
+.contact-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 2.5rem;
+  max-width: 860px;
+  margin-inline: auto;
+}
+.contact-details-section .diaspora-box {
+  max-width: 860px;
+  margin-inline: auto;
+  margin-top: 2.25rem;
+}
+@media (max-width: 820px) {
+  .contact-info-grid { grid-template-columns: 1fr; }
+}
+
+/* =====================================================
+   PRELOADER — écran d'arrivée (sigle pulsé, sortie fondue)
+   ===================================================== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* au-dessus du rideau (1050) et du drawer (999) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  background: var(--bg-dark);
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+.preloader.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Logo light posé directement sur le navy — pas de pastille blanche :
+   le wrapper ne porte plus que la pulsation. */
+.preloader__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: preloaderPulse 1.5s ease-in-out infinite;
+}
+.preloader__logo {
+  height: clamp(140px, 26vh, 180px);
+  width: auto;
+}
+.preloader__word {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.42em;
+  padding-left: 0.42em; /* recentrage optique de l'interlettrage */
+  color: rgba(255, 255, 255, 0.9);
+  animation: preloaderTrack 1.8s ease-in-out infinite alternate;
+}
+.preloader__word span { color: var(--primary); font-weight: 600; }
+@keyframes preloaderPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes preloaderTrack {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preloader__mark,
+  .preloader__word { animation: none; }
+}
+
+/* =====================================================
+   THANK YOU PAGE
+   ===================================================== */
+.thankyou-section {
+  min-height: 100vh;
+  min-height: 100svh; /* hauteur visible à l'arrivée, sans saut de barre d'URL */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 1.5rem 4rem;
+  position: relative;
+}
+
+.thankyou-container {
+  max-width: 600px;
+  width: 100%;
+}
+
+.thankyou-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--r-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.thankyou-logo-wrap {
+  margin-bottom: 2rem;
+}
+
+.thankyou-logo {
+  height: 64px;
+  width: auto;
+}
+
+.thankyou-icon {
+  color: var(--primary-text);
+  margin-bottom: 1.5rem;
+  animation: scaleBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleBounce {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.thankyou-card h1 {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+}
+
+.thankyou-lead {
+  color: var(--fg-muted);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.thankyou-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(249, 115, 22, 0.1);
+  color: var(--primary-text);
+  padding: 0.5rem 1rem;
+  border-radius: var(--r-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+}
+
+.thankyou-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   404 NOT FOUND PAGE
+   ===================================================== */
+.not-found-section {
+  min-height: 100vh;
+  min-height: 100svh; /* hauteur visible à l'arrivée, sans saut de barre d'URL */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 1.5rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.not-found-container {
+  max-width: 600px;
+  position: relative;
+  z-index: 2;
+}
+
+.not-found-code {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(8rem, 20vw, 15rem);
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.05); /* encre fantôme sur le fond clair du site */
+  margin-bottom: -2rem;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.not-found-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.not-found-lead {
+  color: var(--fg-muted);
+  font-size: 1.125rem;
+  margin-bottom: 3rem;
+  max-width: 460px;
+  margin-inline: auto;
+}
+
+.not-found-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   LEGAL PAGES
+   ===================================================== */
+.legal-section {
+  padding-block: 5rem;
+}
+
+.legal-content {
+  color: var(--fg-muted);
+  line-height: 1.7;
+}
+
+.legal-content h2 {
+  color: var(--primary-text);
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-content h2:first-child {
+  margin-top: 0;
+}
+
+.legal-content h3 {
+  color: var(--primary-text);
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.legal-content p {
+  margin-bottom: 1.25rem;
+}
+
+.legal-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.legal-content li {
+  margin-bottom: 0.5rem;
+}
+
+.legal-content a {
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--t-fast);
+}
+
+.legal-content a:hover {
+  text-decoration-color: var(--primary-text);
+}
+
+.legal-content code {
+  background: var(--bg-alt);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.legal-cta {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.response-engagement-box {
+  background: rgba(249, 115, 22, 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: var(--r-md);
+  padding: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-top: 3rem;
+}
+
+.response-engagement-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.response-engagement-box h3 {
+  color: var(--primary-text);
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.response-engagement-box p {
+  color: var(--fg-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.response-engagement-box strong {
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+.response-time-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* ----- Variante « sur hero sombre » (.site-header--onhero) -----
+   Posée par Navbar quand la page rend une sentinelle (= hero photo plein
+   cadre). La nav devient transparente, texte blanc, voile nuit dégradé vers
+   le bas ; le badge logo reste une pastille claire. CE BLOC VIT EN FIN DE
+   FICHIER exprès : ses sélecteurs tiennent en spécificité avec ceux de
+   `.site-header--overlay` (y compris dans les media queries responsive) —
+   c'est l'ordre source qui le fait gagner ; les règles `.site-header
+   .is-scrolled` (verre clair, spécificité supérieure) restent prioritaires
+   dès que la nav se compacte. */
+.site-header--onhero {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  color: #fff;
+}
+.site-header--onhero::before {
+  /* Voile nuit dégradé vers le bas : lisibilité des liens sans aplat. */
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.42), rgba(15, 23, 42, 0));
+}
+/* Une fois compacté (verre clair .is-scrolled), le voile nuit disparaît. */
+.site-header.is-scrolled.site-header--onhero::before { background: none; }
+.site-header--onhero .desktop-nav a {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(15, 23, 42, .45);
+}
+.site-header--onhero .desktop-nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.site-header--onhero .desktop-nav a.active { color: #fff; }
+.site-header--onhero .language-toggle {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 3px rgba(15, 23, 42, .45);
+}
+.site-header--onhero .mobile-menu-button { color: #fff; }
+.site-header--onhero .mobile-menu-button:hover { background: rgba(255, 255, 255, 0.14); }
+.site-header--onhero .brand {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ----- Retour tactile étendu : cartes et CTA secondaires s'enfoncent aussi
+   légèrement au presser (transition --t-fast = 150 ms). ----- */
+.prop-card__cta:active { transform: scale(.97); }
+.service-card:active,
+.news-card:active,
+.value-item:active,
+.prop-card:active { transform: translateY(0) scale(.985); }
+.faq-question:active { color: var(--primary-text); }
+
+/* =====================================================
+   HERO IMMOBILIER — variante bespoke (standard Framer/Lovart)
+   ===================================================== */
+.hero--immo {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #fff;
+  /* Règle identique à .page-hero : la nav est fixe au-dessus. */
+  padding-top: calc(var(--nav-h) + 4rem + env(safe-area-inset-top, 0px));
+  padding-bottom: 4rem;
+  display: flex;
+  align-items: flex-end;
+}
+/* Empilement des couches (diaporama → scrim → contenu) — mêmes règles que
+   les autres heroes. Le scrim gradient directionnel laisse passer le clic
+   nulle part : pointer-events none pour ne jamais intercepter l'UI. */
+.hero--immo .hero-carousel { z-index: 0; }
+.hero--immo .hero-immo__scrim {
+  z-index: 1;
+  pointer-events: none;
+}
+.hero--immo .container { position: relative; z-index: 2; }
+
+/* Bloc texte : alignement à GAUCHE, largeur de composition élargie pour
+   laisser respirer le titre massif (max-w-4xl = 56rem en lg:text-8xl). */
+.hero-immo__content { text-align: left; max-width: 56rem; }
+
+/* Masque « SplitText » : chaque titre (FR/EN) porte son masque overflow:
+   hidden ; les mots inline-block en sortent (y:100 → 0) à l'animation. Pas de
+   data-lang ici → aucune interférence avec le bloc bilingue final.
+   Compensation jambages : leading-[1.05] + overflow:hidden rognerait le « p »
+   de « pierre » — on ajoute un tapis bas (padding) neutralisé par une marge
+   négative, la géométrie visuelle reste inchangée. */
+.hero-immo__mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.hero-immo__word { display: inline-block; }
+
+/* Viewports courts en paysage : réserve nette comme les autres heroes. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero--immo {
+    padding-top: calc(var(--nav-h) + 1.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 2rem;
+  }
+}
+
+/* =====================================================
+   REFONTE UI/UX 2026 — Génie Civil & Immobilier
+   (ProjetPhare, PrestationsGalerie, ValeursGrid,
+    ProgrammesGrid, ImmobilierHero)
+   ===================================================== */
+
+/* Première section après le hero (ProjetPhare) : la remontée carte claire
+   posait un fond transparent (règle `.scroll-sentinel + .section`) — on
+   restaure un fond crème opaque pour une carte nette montée sur le hero.
+   Égalité de spécificité, bloc placé APRÈS : cette règle gagne. */
+.section.projet-phare { background: var(--bg); }
+
+/* Fiche technique du projet — filet éditorial gauche. */
+.projet-phare__sheet {
+  border-left: 1px solid var(--border);
+  padding-left: 1.25rem;
+}
+.projet-phare__row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding-block: 1.05rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+.projet-phare__row:last-child { border-bottom: 0; }
+.projet-phare__row dt { flex-shrink: 0; }
+.projet-phare__row dd { flex: 1; min-width: 0; }
+
+/* Couverture : traitement sobre — saturation naturelle, AUCUN flou. */
+.projet-phare__cover { filter: saturate(1.05) contrast(1.02); }
+
+/* Tags / badges du projet — rectangles stricts à filet fin (jamais pill). */
+.projet-phare__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.85rem;
+  border: 1px solid rgba(22, 33, 58, 0.16);
+  border-radius: 4px;
+  background: rgba(22, 33, 58, 0.045);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+/* Vidéo du chantier : la vidéo garde son ratio natif (h-auto w-full). */
+.projet-phare__video-frame video { display: block; }
+
+/* Sections sombres (ProgrammesGrid) : lisibilité des libellés système
+   (.eyebrow gris ardoise et .section-heading p) sur fond nuit. */
+.section--dark .eyebrow { color: rgba(255, 255, 255, 0.78); }
+.section--dark .section-heading p { color: rgba(255, 255, 255, 0.85); }
+
+/* Hero Immobilier « posture éditoriale » : respiration verticale accrue. */
+.hero--immo-editorial { padding-bottom: clamp(3.5rem, 12vh, 7rem); }
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero--immo-editorial { padding-bottom: 2rem; }
+}
+/* ---------- Bilingue (doit être en dernier pour ne pas être écrasé) ---------- */
+[data-lang="en"] { display: none; }
+.lang-en [data-lang="fr"] { display: none; }
+.lang-en [data-lang="en"] { display: revert; }
+/* Exceptions : `revert` retombe sur la valeur UA (inline) et écraserait le
+   display stylé des éléments qui portent data-lang directement — on rétablit
+   celui des boutons (inline-flex) et des surtitres (inline-block + marge). */
+.lang-en .button[data-lang='en'] { display: inline-flex; }
+.lang-en .hero-eyebrow[data-lang='en'],
+.lang-en .eyebrow[data-lang='en'],
+.lang-en .hero-immo__eyebrow[data-lang='en'] { display: inline-block; }

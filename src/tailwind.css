@@ -1,0 +1,9 @@
+/* Point d'entrée Tailwind — importé dans main.tsx APRÈS App.css.
+   Le preflight est désactivé (tailwind.config.js) : seules les utilities
+   sont générées, le design system App.css reste la référence globale.
+   À noter : les styles composés d'App.css (ex. .section-heading h2) peuvent
+   battre une utility de même propriété par spécificité — pour les nouveaux
+   blocs, composer utilities + classes préfixées dédiées (bento-*, gw-*). */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
