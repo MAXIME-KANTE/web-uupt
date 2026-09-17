@@ -5,8 +5,27 @@ import type { LucideIcon } from 'lucide-react';
  * Decrivent les donnees exposees par `src/data/uuptData.ts`.
  * ================================================================== */
 
+/**
+ * Champ editorial bilingue (convention spec §8 : contenu = champs fr/en).
+ * Le FR existant est conserve tel quel ; l'EN est une traduction a part
+ * entiere. Lecture cote composant : `const { lang } = useLanguage()` puis
+ * `champ[lang]`.
+ */
+export interface LocalizedText {
+  fr: string;
+  en: string;
+}
+
 /** Identifiants des routes du site (navigation React Router). */
-export type RouteId = 'accueil' | 'a-propos' | 'axes' | 'historique' | 'partenaires' | 'contact';
+export type RouteId =
+  | 'accueil'
+  | 'a-propos'
+  | 'axe-academique-culturel'
+  | 'axe-innovation'
+  | 'axe-sportif'
+  | 'historique'
+  | 'partenaires'
+  | 'contact';
 
 /** Identifiants des sections servant d'ancres (conservé pour compatibilité). */
 export type SectionId = RouteId;
@@ -19,26 +38,31 @@ export interface NavLink {
   id: RouteId;
   /** Chemin de la route (ex. `/a-propos`). */
   to: string;
-  label: string;
+  label: LocalizedText;
   /** Description courte affichee dans le menu mobile et le footer. */
-  description: string;
+  description: LocalizedText;
 }
 
-/** Coordonnees et identite institutionnelle de l'Union. */
+/**
+ * Coordonnees et identite institutionnelle de l'Union.
+ * Les noms propres (`name`, `acronym`, `city`, `region`) et les
+ * coordonnees techniques (`email`, `phone`, `whatsapp`, `createdAt`)
+ * restent des `string` simples : ils ne se traduisent pas.
+ */
 export interface OrganizationInfo {
   name: string;
   acronym: string;
   /** Baseline courte (utilisee dans le footer et les meta). */
-  tagline: string;
-  type: string;
+  tagline: LocalizedText;
+  type: LocalizedText;
   /** Date de creation au format ISO. */
   createdAt: string;
   /** Date lisible par un humain. */
-  createdLabel: string;
+  createdLabel: LocalizedText;
   city: string;
   region: string;
-  country: string;
-  address: string;
+  country: LocalizedText;
+  address: LocalizedText;
   email: string;
   phone: string;
   /** Numero WhatsApp au format international sans espaces (ex. 221XXXXXXXXX). */
@@ -53,34 +77,34 @@ export interface OrganizationInfo {
 export interface MediaAsset {
   src: string;
   fallback: string;
-  alt: string;
+  alt: LocalizedText;
 }
 
 /** Bouton d'action (CTA). */
 export interface CallToAction {
-  label: string;
+  label: LocalizedText;
   href: string;
   icon?: LucideIcon;
 }
 
 /** Titre du hero decoupe pour accentuer une portion en bleu vif. */
 export interface HeroTitle {
-  lead: string;
-  accent: string;
-  tail: string;
+  lead: LocalizedText;
+  accent: LocalizedText;
+  tail: LocalizedText;
 }
 
 /** Contenu de la section Hero. */
 export interface HeroContent {
   /** Sur-titre en majuscules, ex. "MOUVEMENT ESTUDIANTIN • THIÈS, SÉNÉGAL". */
-  overtitle: string;
+  overtitle: LocalizedText;
   title: HeroTitle;
-  subtitle: string;
+  subtitle: LocalizedText;
   primaryCta: CallToAction;
   secondaryCta: CallToAction;
   background: MediaAsset;
   /** Bandeau d'accroche defilant en bas du hero. */
-  marqueeItems: string[];
+  marqueeItems: LocalizedText[];
 }
 
 /** Chiffre cle de la banniere de statistiques. */
@@ -89,15 +113,15 @@ export interface Stat {
   value: number;
   prefix?: string;
   suffix?: string;
-  label: string;
-  detail: string;
+  label: LocalizedText;
+  detail: LocalizedText;
   icon: LucideIcon;
 }
 
 /** Prestation rattachee a un axe d'activite. */
 export interface AxisActivity {
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
 }
 
 /** Axe d'activite de l'UUPT. */
@@ -105,9 +129,9 @@ export interface ActivityAxis {
   id: string;
   /** Numero d'ordre affiche (01, 02, 03). */
   order: string;
-  title: string;
-  tagline: string;
-  description: string;
+  title: LocalizedText;
+  tagline: LocalizedText;
+  description: LocalizedText;
   icon: LucideIcon;
   image: MediaAsset;
   activities: AxisActivity[];
@@ -117,10 +141,10 @@ export interface ActivityAxis {
 export interface TimelineStep {
   id: string;
   order: number;
-  phase: string;
-  period: string;
-  title: string;
-  description: string;
+  phase: LocalizedText;
+  period: LocalizedText;
+  title: LocalizedText;
+  description: LocalizedText;
   icon: LucideIcon;
   /** Marque l'etape fondatrice du 26 avril 2026. */
   isMilestone?: boolean;
@@ -129,22 +153,26 @@ export interface TimelineStep {
 /** Grande mission statutaire. */
 export interface MissionPillar {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   icon: LucideIcon;
 }
 
 /** Statut d'affiliation d'un etablissement partenaire. */
 export type PartnerStatus = 'affilie' | 'en-cours' | 'invite';
 
-/** Etablissement d'enseignement superieur partenaire et son BDE. */
+/**
+ * Etablissement d'enseignement superieur partenaire et son BDE.
+ * `name`, `shortName` et `bdeName` sont des noms propres (sigles et
+ * denominations d'etablissements) : ils restent des `string` simples.
+ */
 export interface Partner {
   id: string;
   name: string;
   shortName: string;
-  kind: 'Université' | 'École supérieure' | 'Institut' | 'Centre de formation';
-  field: string;
-  filieres: string[];
+  kind: LocalizedText;
+  field: LocalizedText;
+  filieres: LocalizedText[];
   bdeName: string;
   status: PartnerStatus;
 }
@@ -153,15 +181,20 @@ export interface Partner {
 export interface PartnerDirectory {
   /** `true` tant que la liste officielle n'est pas validee. */
   isPlaceholder: boolean;
-  notice: string;
+  notice: LocalizedText;
   establishments: Partner[];
 }
 
-/** Canal de contact rapide. */
+/**
+ * Canal de contact rapide.
+ * `value` reste un `string` simple pour les coordonnees non editoriales
+ * (email, telephone) ; il est bilingue pour les valeurs de contenu
+ * (localisation, nature du mouvement).
+ */
 export interface ContactChannel {
   id: string;
-  label: string;
-  value: string;
+  label: LocalizedText;
+  value: string | LocalizedText;
   href: string;
   icon: LucideIcon;
 }
@@ -177,7 +210,7 @@ export interface SocialLink {
 /** Option du selecteur "Rôle" du formulaire. */
 export interface RoleOption {
   value: string;
-  label: string;
+  label: LocalizedText;
 }
 
 /** Valeurs du formulaire de contact. */
@@ -206,9 +239,9 @@ export interface LanguageOption {
 
 /** Bloc de copie d'un en-tete de section. */
 export interface SectionCopy {
-  eyebrow: string;
-  title: string;
+  eyebrow: LocalizedText;
+  title: LocalizedText;
   /** Portion du titre mise en valeur (bleu vif). */
-  highlight?: string;
-  description: string;
+  highlight?: LocalizedText;
+  description: LocalizedText;
 }

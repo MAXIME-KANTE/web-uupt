@@ -57,10 +57,14 @@ export default function Footer() {
                 <strong>{organization.acronym}</strong>
               </p>
             </div>
+            {/* tagline/adresse bilingues depuis uuptData (champs fr/en,
+                convention spec §8) — libellés EN canoniques du brief. */}
             <p data-lang="fr">
-              {organization.tagline} ! {organization.address}.
+              {organization.tagline.fr} ! {organization.address.fr}.
             </p>
-            <p data-lang="en">Together, let's build the future! Thiès, Senegal.</p>
+            <p data-lang="en">
+              {organization.tagline.en} ! {organization.address.en}.
+            </p>
             <div className="footer-social">
               {SOCIALS.map((social) => (
                 <a
