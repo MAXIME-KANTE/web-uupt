@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { useLanguage } from '../context/LanguageContext'
 
-interface IdentitySlide {
+/** Un texte de présentation de l'Union — paires bilingues (pattern Valeur/Prestation). */
+export interface IdentitySlide {
   eyebrowFr: string
   eyebrowEn: string
   titleFr: string
@@ -11,76 +12,51 @@ interface IdentitySlide {
   descEn: string
 }
 
-const SLIDES: readonly IdentitySlide[] = [
-  {
-    eyebrowFr: 'Notre identité',
-    eyebrowEn: 'Our identity',
-    titleFr: 'SALEEL GROUPE, une signature africaine.',
-    titleEn: 'A multi-sector group, an African signature.',
-    descFr:
-      "Génie civil, immobilier, comptabilité, numérique : quatre pôles d'excellence réunis pour bâtir des projets durables et ambitieux.",
-    descEn:
-      'Civil engineering, real estate, accounting, digital: four centers of excellence united to build sustainable and ambitious projects.',
-  },
-  {
-    eyebrowFr: 'Notre vision',
-    eyebrowEn: 'Our vision',
-    titleFr: 'Créer de la valeur au cœur des territoires.',
-    titleEn: 'Creating value at the heart of local communities.',
-    descFr:
-      "Allier savoir-faire local et standards internationaux pour répondre efficacement aux défis de développement en Afrique de l'Ouest.",
-    descEn:
-      "Combining local expertise and international standards to effectively meet West Africa's development challenges.",
-  },
-  {
-    eyebrowFr: 'Nos valeurs',
-    eyebrowEn: 'Our values',
-    titleFr: "Rigueur, intégrité et quête permanente d'excellence.",
-    titleEn: 'Rigour, integrity and a constant quest for excellence.',
-    descFr:
-      'Un engagement total auprès de nos clients et partenaires, fondé sur la transparence et la réussite partagée.',
-    descEn:
-      'Total commitment to our clients and partners, built on transparency and shared success.',
-  },
-  {
-    eyebrowFr: 'Engagement diaspora',
-    eyebrowEn: 'Diaspora commitment',
-    titleFr: 'Votre partenaire de confiance depuis l’étranger.',
-    titleEn: 'Your trusted partner from abroad.',
-    descFr:
-      "Un accompagnement sur-mesure et transparent pour concrétiser et sécuriser vos projets d'investissement au Sénégal.",
-    descEn:
-      'Tailored, transparent support to realize and secure your investment projects in Senegal.',
-  },
-]
+interface IdentitySliderProps {
+  /** Diaporama de textes (identité, création, mission…) — requis, contenu UUPT. */
+  slides: readonly IdentitySlide[]
+  /** Libellé accessible du carrousel ; défaut : l'eyebrow de la 1re slide. */
+  ariaLabelFr?: string
+  ariaLabelEn?: string
+}
 
 /**
  * Carrousel de textes de la bannière signature (motif Kenté) :
  * défilement automatique toutes les 3 s, pause au survol,
  * respect de prefers-reduced-motion.
+ *
+ * À placer dans une section sombre (`section.pattern-banner` d'App.css) :
+ * les textes héritent sa couleur blanche — le composant ne porte aucun fond.
  */
-export default function IdentitySlider() {
+export default function IdentitySlider({ slides, ariaLabelFr, ariaLabelEn }: IdentitySliderProps) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
   const { lang } = useLanguage()
 
   useEffect(() => {
-    if (prefersReducedMotion || paused || SLIDES.length < 2) return
+    if (prefersReducedMotion || paused || slides.length < 2) return
     const id = window.setInterval(() => {
-      setCurrent((previous) => (previous + 1) % SLIDES.length)
+      setCurrent((previous) => (previous + 1) % slides.length)
     }, 3000)
     return () => window.clearInterval(id)
-  }, [paused, prefersReducedMotion])
+  }, [paused, prefersReducedMotion, slides.length])
+
+  if (!slides.length) return null
+
+  const ariaLabel =
+    lang === 'fr'
+      ? (ariaLabelFr ?? slides[0].eyebrowFr)
+      : (ariaLabelEn ?? slides[0].eyebrowEn)
 
   return (
     <div
       className="identity-carousel"
-      aria-label={lang === 'fr' ? 'Notre identité' : 'Our identity'}
+      aria-label={ariaLabel}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {SLIDES.map((slide, index) => (
+      {slides.map((slide, index) => (
         <div
           key={slide.eyebrowFr}
           className={index === current ? 'identity-slide is-active' : 'identity-slide'}
