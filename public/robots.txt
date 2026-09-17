@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /merci
+
+Sitemap: https://uupt.maximekante23.workers.dev/sitemap.xml

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sitemap UUPT — 10 routes indexables (/merci et la 404 en sont exclues).
+     Les deux langues (fr/en) vivent à la même URL (bascule client) : chaque
+     hreflang pointe donc sur la route elle-même. TODO(UUPT) : substituer
+     https://uupt.maximekante23.workers.dev au domaine définitif (voir README). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/axe-academique-culturel</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/axe-academique-culturel"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/axe-academique-culturel"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/axe-innovation</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/axe-innovation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/axe-innovation"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/axe-sportif</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/axe-sportif"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/axe-sportif"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/a-propos</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/a-propos"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/a-propos"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/historique</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/historique"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/historique"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/partenaires</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/partenaires"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/partenaires"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/contact"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/mentions-legales</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/mentions-legales"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/mentions-legales"/>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://uupt.maximekante23.workers.dev/politique-de-confidentialite</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://uupt.maximekante23.workers.dev/politique-de-confidentialite"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://uupt.maximekante23.workers.dev/politique-de-confidentialite"/>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>
