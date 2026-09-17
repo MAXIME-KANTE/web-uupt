@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Handshake } from 'lucide-react'
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd'
@@ -11,7 +10,6 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
 import { aboutCopy, bdePartnership, media, missionPillars, organization } from '../data/uuptData'
-import type { MediaAsset } from '../types'
 
 /** Données structurées de la page — référence stable au niveau module. */
 const JSON_LD_GRAPH = [
@@ -20,30 +18,6 @@ const JSON_LD_GRAPH = [
     { name: 'À propos', path: 'a-propos' },
   ]),
 ]
-
-/**
- * Applique la convention des médias de uuptData (voir `media` dans
- * `src/data/uuptData.ts` et `public/photos/README.md`) : l'image de secours
- * Unsplash est affichée tant que le fichier local `public/photos/…` n'est pas
- * fourni ; dès qu'il existe, il prend automatiquement sa place. Sondage par
- * objet Image — l'état initial est le fallback, donc aucun clignotement tant
- * que la photo officielle est absente.
- */
-function useLocalFirstMedia(asset: MediaAsset): string {
-  const [src, setSrc] = useState(asset.fallback)
-  useEffect(() => {
-    let cancelled = false
-    const probe = new Image()
-    probe.onload = () => {
-      if (!cancelled) setSrc(asset.src)
-    }
-    probe.src = asset.src
-    return () => {
-      cancelled = true
-    }
-  }, [asset.src])
-  return src
-}
 
 /** Minuscule initiale (« Fédérer… » → « fédérer… ») pour les énumérations en phrase. */
 const decapitalize = (text: string): string => text.charAt(0).toLowerCase() + text.slice(1)
@@ -111,7 +85,15 @@ export default function AboutPage() {
   )
 
   const calque = useCalquePool()
-  const aboutImage = useLocalFirstMedia(media.about)
+
+  /* Image du hero : le fallback Unsplash de `media.about` est affiché tant
+     que le fichier local `public/photos/campus-thies.jpg` n'est pas fourni
+     (convention documentée dans public/photos/README.md). Pas de sonde
+     client du fichier local : tant qu'il est absent, chaque GET produirait
+     un 404 en console (prod) ou un warning MIME (dev Vite, htmlFallback).
+     TODO(UUPT) : brancher `media.about.src` (et, si besoin, une bascule
+     fallback→local) le jour où la photo officielle est livrée. */
+  const aboutImage = media.about.fallback
 
   return (
     <>
