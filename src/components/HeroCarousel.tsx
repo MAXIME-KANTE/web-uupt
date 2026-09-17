@@ -15,11 +15,13 @@ interface HeroCarouselProps {
    *  lazy pour ne pas concurrencer le vrai LCP. */
   priority?: boolean
 }
-/** Les URLs Unsplash embarquent leur largeur (…&w=1920) — le descripteur
- * srcSet se déduit directement de l'URL, pas d'un tableau mesuré. */
-export function buildSrcSet(url: string): string {
+/** Les URLs distantes embarquent leur largeur (…&w=1920) — le descripteur
+ * srcSet se déduit directement de l'URL, pas d'un tableau mesuré. Les photos
+ * locales (`/images/…`) n'ont pas de variante largeur : aucune srcSet n'est
+ * posée (`undefined`), le `src` seul les charge. */
+export function buildSrcSet(url: string): string | undefined {
   const match = url.match(/[?&]w=(\d+)/)
-  return match ? `${url} ${match[1]}w` : url
+  return match ? `${url} ${match[1]}w` : undefined
 }
 
 /**

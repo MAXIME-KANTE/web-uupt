@@ -2,12 +2,17 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Handshake, Info } from 'lucide-react'
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd'
 import PageHero from '../components/PageHero'
+import PartnerBdeGrid from '../components/PartnerBdeGrid'
 import Reveal from '../components/Reveal'
+import ShowcaseCarousel from '../components/ShowcaseCarousel'
 import Magnetic from '../components/motion/Magnetic'
+import { CALQUE_BAND_INDEX, HERO_SLIDE_COUNT } from '../constants'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
 import {
+  galleryCopy,
+  gallerySlides,
   partnerDirectory,
   partnerStatusLabels,
   partnersCopy,
@@ -46,14 +51,17 @@ const STATUS_DOTS: Record<PartnerStatus, string> = {
  * fond nuit, filet blanc 10 %, accent orange), composée avec le contenu
  * UUPT :
  *
- * 1. PageHero « BDE Partenaires » (photo du pool calque, accroche
- *    partnersCopy) ;
+ * 1. PageHero « BDE Partenaires » (diaporama du pool calque, 6 photos,
+ *    accroche partnersCopy) ;
  * 2. Annuaire — une carte par établissement de `partnerDirectory` (8 pôles) :
  *    sigle, statut d'affiliation (partnerStatusLabels), nom, type · domaine,
  *    filières, BDE ; bandeau d'information tant que la liste nominative
  *    officielle n'est pas validée (isPlaceholder) ; grille responsive
  *    1 colonne mobile / 2 tablette / 3 bureau, révélée au scroll (Reveal) ;
- * 3. bandeau « Devenir partenaire » — texte + CTA /contact.
+ * 3. BDE partenaires — grille PartnerBdeGrid (liens officiels des
+ *    établissements partenaires, GSAP ScrollTrigger en cascade) ;
+ * 4. ShowcaseCarousel — galerie « L'Union en images » (6 photos officielles) ;
+ * 4. bandeau « Devenir partenaire » — texte + CTA /contact.
  */
 export default function PartenairesPage() {
   const { lang } = useLanguage()
@@ -70,9 +78,9 @@ export default function PartenairesPage() {
     <>
       <JsonLd id="jsonld-page" graph={JSON_LD_GRAPH} />
 
-      {/* ===== 1 · HERO — photo du pool calque, accroche partnersCopy
-             (chaque établissement représenté par son BDE). ===== */}
-      <PageHero variant="photo" images={calque.slice(0, 3)}>
+      {/* ===== 1 · HERO — diaporama du pool calque (6 photos), accroche
+             partnersCopy (chaque établissement représenté par son BDE). ===== */}
+      <PageHero variant="photo" images={calque.slice(0, HERO_SLIDE_COUNT)}>
         <span className="eyebrow" data-lang="fr">{partnersCopy.eyebrow.fr}</span>
         <span className="eyebrow" data-lang="en">{partnersCopy.eyebrow.en}</span>
         <h1 data-lang="fr">BDE Partenaires</h1>
@@ -199,14 +207,35 @@ export default function PartenairesPage() {
         </div>
       </section>
 
-      {/* ===== 3 · DEVENIR PARTENAIRE — la porte d'entrée pour les
+      {/* ===== 3 · BDE PARTENAIRES — grille des bureaux des étudiants
+             officiels de l'Union (PartnerBdeGrid, liens externes). ===== */}
+      <PartnerBdeGrid />
+
+      {/* ===== 4 · GALERIE — « L'Union en images » : diaporama des photos
+             officielles (gallerySlides) en carte blanche. ===== */}
+      <section
+        className="section section--alt"
+        aria-label={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+      >
+        <ShowcaseCarousel
+          slides={gallerySlides}
+          eyebrowFr={galleryCopy.eyebrow.fr}
+          eyebrowEn={galleryCopy.eyebrow.en}
+          titleFr={`${galleryCopy.title.fr} ${galleryCopy.highlight?.fr ?? ''}.`}
+          titleEn={`${galleryCopy.title.en} ${galleryCopy.highlight?.en ?? ''}.`}
+          link={{ to: '/contact', fr: 'Devenir partenaire', en: 'Become a partner' }}
+          ariaLabel={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+        />
+      </section>
+
+      {/* ===== 5 · DEVENIR PARTENAIRE — la porte d'entrée pour les
              établissements et leurs BDE (bandeau photo, pool calque). ===== */}
       <section className="section">
         <div className="container">
           <div className="cta-band">
             <div
               className="cta-photo-bg cta-photo-bg--calque"
-              style={{ backgroundImage: `url("${calque[3] ?? calque[0]}")` }}
+              style={{ backgroundImage: `url("${calque[CALQUE_BAND_INDEX] ?? calque[0]}")` }}
             />
             <h2 data-lang="fr">
               Votre établissement souhaite <em className="ti">rejoindre l’Union ?</em>

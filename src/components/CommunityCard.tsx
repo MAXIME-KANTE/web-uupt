@@ -16,8 +16,8 @@ export default function CommunityCard() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const subject = encodeURIComponent('Abonnement aux actualités SALEEL GROUPE')
-    const body = encodeURIComponent(`Bonjour,\n\nJe souhaite recevoir les actualités de SALEEL GROUPE.\n\nEmail : ${email}\n`)
+    const subject = encodeURIComponent('Abonnement aux actualités UUPT')
+    const body = encodeURIComponent(`Bonjour,\n\nJe souhaite recevoir les actualités de l'UUPT (Union des Universités Privées de Thiès).\n\nEmail : ${email}\n`)
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`
     setNoted(true)
   }

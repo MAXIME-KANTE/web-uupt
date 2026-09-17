@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Clock, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
-import { AXE_GALLERIES, CONTACT_EMAIL } from '../constants'
+import { AXE_GALLERIES, CONTACT_EMAIL, HERO_SLIDE_COUNT } from '../constants'
 import { contactFormCopy, organization, roleOptions } from '../data/uuptData'
 import type { ContactFormValues, SubmitStatus } from '../types'
 import BrandLogo from './BrandLogo'
@@ -11,14 +11,17 @@ import HeroCarousel from './HeroCarousel'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
 /**
- * Diaporama du volet de marque : les images des trois axes (académique &
- * culturel, innovation, sportif) en fondu automatique — le fond vit,
- * l'identité des trois axes reste présente derrière le texte.
+ * Diaporama du volet de marque : deux photos de chacun des trois axes
+ * (académique & culturel, innovation, sportif) — HERO_SLIDE_COUNT visuels au
+ * total (6), sans doublon, en fondu automatique : le fond vit, l'identité
+ * des trois axes reste présente derrière le texte.
  */
+const BRAND_SLIDES_PER_AXE = Math.round(HERO_SLIDE_COUNT / 3)
+
 const BRAND_SLIDES: readonly string[] = [
-  ...AXE_GALLERIES['academique-culturel'],
-  ...AXE_GALLERIES.innovation,
-  ...AXE_GALLERIES.sportif,
+  ...AXE_GALLERIES['academique-culturel'].slice(0, BRAND_SLIDES_PER_AXE),
+  ...AXE_GALLERIES.innovation.slice(0, BRAND_SLIDES_PER_AXE),
+  ...AXE_GALLERIES.sportif.slice(0, BRAND_SLIDES_PER_AXE),
 ]
 
 const INITIAL_STATE: ContactFormValues = {

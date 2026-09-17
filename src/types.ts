@@ -184,6 +184,28 @@ export interface PartnerDirectory {
   notice: LocalizedText;
   establishments: Partner[];
 }
+/**
+ * BDE partenaire officiel de l'Union, presente dans la grille
+ * `PartnerBdeGrid`. `universityName` et `bdeName` sont des noms propres
+ * (denominations d'etablissements) : `string` simples, non traduits.
+ */
+export interface PartnerBde {
+  id: string;
+  universityName: string;
+  bdeName: string;
+  location: LocalizedText;
+  websiteUrl: string;
+  tag: LocalizedText;
+}
+
+/** Bloc de copie de la section « BDE partenaires » (grille PartnerBdeGrid). */
+export interface PartnerBdeSection {
+  copy: SectionCopy;
+  /** Libelle du lien externe vers le site du BDE / de l'universite. */
+  cta: LocalizedText;
+}
+
+/** Canal de contact rapide. */
 
 /**
  * Canal de contact rapide.

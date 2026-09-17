@@ -74,7 +74,7 @@ npm run preview    # sert le build de production
 Le formulaire (`src/components/ContactForm.tsx`) poste en **AJAX** ( `fetch` JSON) vers
 
 ```
-https://formsubmit.co/ajax/${CONTACT_EMAIL}     <!-- CONTACT_EMAIL = contact@uupt.sn -->
+https://formsubmit.co/ajax/${CONTACT_EMAIL}     <!-- CONTACT_EMAIL = maximekante23@gmail.com -->
 ```
 
 avec un payload JSON : `_subject` (objet construit), `_template: "table"`, `_captcha:
@@ -87,7 +87,7 @@ route `/merci` (page de remerciement dédiée). En cas d'échec réseau, un bout
 ### ⚠️ Activation (à faire UNE fois avant la mise en production)
 
 À la **première soumission réelle**, FormSubmit envoie un **email d'activation** à
-`contact@uupt.sn` : ouvrir cet email et cliquer son lien de confirmation une seule fois.
+`maximekante23@gmail.com` : ouvrir cet email et cliquer son lien de confirmation une seule fois.
 Ensuite, chaque soumission arrive automatiquement dans la boîte de réception. Sans cette
 étape, les messages ne sont pas délivrés.
 
@@ -97,20 +97,28 @@ Ensuite, chaque soumission arrive automatiquement dans la boîte de réception. 
   coordonnées, date de création), `navLinks`, `activityAxes`, `timelineSteps`,
   `partnerDirectory`, `contactChannels`, `socialLinks`, `roleOptions`… tous bilingues
   (`fr`/`en`).
-- **`src/constants.ts`** — `CONTACT_EMAIL`, `SITE_URL`, diaporama du hero
-  (`HOME_HERO_SLIDES` — garder en cohérence avec le `<link rel="preload">` de
-  `index.html`) et galeries d'images des axes.
-- **Visuels** — le site n'utilise que des images distantes (Unsplash) via les pools de
-  `src/constants.ts` et `src/hooks/useCalquePool.ts`.
+- **`src/constants.ts`** — `CONTACT_EMAIL`, `SITE_URL`, **pool des photos locales**
+  (`LOCAL_PHOTOS`, fichiers de `public/images`) et diaporamas (`HOME_HERO_SLIDES`,
+  `AXE_GALLERIES`, `HERO_SLIDE_COUNT` = 6 images par hero, `CALQUE_BAND_INDEX`) —
+  garder `HOME_HERO_SLIDES[0]` en cohérence avec le `<link rel="preload">` de
+  `index.html`.
+- **Visuels** — toutes les photos viennent de `public/images` (registre `LOCAL_PHOTOS`) :
+  héros de toutes les pages, galeries `ShowcaseCarousel`, mini-carrousels des cartes
+  d'axes, bandeaux CTA et volet du formulaire de contact. Les images Unsplash ne
+  subsistent que comme `fallback` déclaratif dans `media` (`uuptData.ts`). Voir
+  `public/images/README.md` pour ajouter/retirer une photo.
 
 ### ⚠️ Placeholders à substituer avant mise en ligne (marqués `TODO(UUPT)`)
 
-1. **Email de contact** — `CONTACT_EMAIL` dans `src/constants.ts` (valeur d'attente
-   `contact@uupt.sn`) : alimente le formulaire FormSubmit, le footer, les mentions légales
-   et la politique de confidentialité.
-2. **WhatsApp / téléphone** — `organization.whatsapp` dans `uuptData.ts`
-   (`221000000000`, format international sans espaces — bouton flottant et ContactForm) et
-   `organization.phone` (`+221 00 000 00 00` — footer, page contact).
+1. **Email de contact** — `CONTACT_EMAIL` dans `src/constants.ts`
+   (`maximekante23@gmail.com`) : alimente le formulaire FormSubmit, le footer, les
+   mentions légales et la politique de confidentialité. Changer aussi
+   `organization.email` dans `uuptData.ts` si l'adresse définitive diffère.
+2. **WhatsApp / téléphone** — RENSEIGNÉS dans `uuptData.ts` :
+   `organization.whatsapp` (`221771490877`, format international sans espaces —
+   bouton flottant et ContactForm) et `organization.phone` (`+221 77 149 08 77` —
+   footer, page contact, JSON-LD). Substituer si les coordonnées officielles
+   de l'Union diffèrent.
 3. **Domaine / SITE_URL** — remplacer `https://uupt.maximekante23.workers.dev` PARTOUT :
    `SITE_URL` dans `src/constants.ts`, `index.html` (canonical, `og:url`, JSON-LD
    `@id`/`url`), `public/sitemap.xml` (chaque `<loc>` et `hreflang`) et `public/robots.txt`
@@ -150,4 +158,4 @@ public/              favicon, logo, SEO (sitemap.xml, robots.txt)
 
 ---
 
-© UUPT — Union des Universités Privées de Thiès. Contact : contact@uupt.sn
+© UUPT — Union des Universités Privées de Thiès. Contact : maximekante23@gmail.com — +221 77 149 08 77

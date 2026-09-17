@@ -5,7 +5,7 @@ import Reveal from '../components/Reveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
-import { CONTACT_EMAIL } from '../constants'
+import { CONTACT_EMAIL, HERO_SLIDE_COUNT } from '../constants'
 import { organization } from '../data/uuptData'
 
 /**
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
 
   return (
     <>
-      <PageHero variant="photo" images={calque.slice(0, 3)}>
+      <PageHero variant="photo" images={calque.slice(0, HERO_SLIDE_COUNT)}>
         <span className="eyebrow" data-lang="fr">Protection des données</span>
         <span className="eyebrow" data-lang="en">Data protection</span>
         <h1 data-lang="fr">Politique de confidentialité</h1>

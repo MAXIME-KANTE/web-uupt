@@ -42,8 +42,12 @@ export default function Preloader() {
     // Même srcset/sizes que l'<img> du hero → le navigateur attend exactement
     // la variante qu'il affichera (même URL, donc même entrée de cache HTTP).
     const firstHeroImage = new Image()
-    firstHeroImage.srcset = buildSrcSet(HOME_HERO_SLIDES[0])
-    firstHeroImage.sizes = '100vw'
+    const firstHeroSrcSet = buildSrcSet(HOME_HERO_SLIDES[0])
+    // Photo locale (pas de variante largeur) : srcset inutile, on ne pose que src.
+    if (firstHeroSrcSet) {
+      firstHeroImage.srcset = firstHeroSrcSet
+      firstHeroImage.sizes = '100vw'
+    }
     firstHeroImage.src = HOME_HERO_SLIDES[0]
 
     const windowLoaded = new Promise<void>((resolve) => {

@@ -6,10 +6,20 @@ import IdentitySlider from '../components/IdentitySlider'
 import type { IdentitySlide } from '../components/IdentitySlider'
 import ValeursGrid from '../components/ValeursGrid'
 import type { Valeur } from '../components/ValeursGrid'
+import ShowcaseCarousel from '../components/ShowcaseCarousel'
+import { CALQUE_BAND_INDEX, HERO_SLIDE_COUNT } from '../constants'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
-import { aboutCopy, bdePartnership, media, missionPillars, organization } from '../data/uuptData'
+import {
+  aboutCopy,
+  bdePartnership,
+  galleryCopy,
+  gallerySlides,
+  media,
+  missionPillars,
+  organization,
+} from '../data/uuptData'
 
 /** Données structurées de la page — référence stable au niveau module. */
 const JSON_LD_GRAPH = [
@@ -68,12 +78,14 @@ const BDE_COMMITMENTS: readonly Valeur[] = bdePartnership.commitments.map((commi
  * Gabarit REF : `AboutPage.tsx` de SALEEL WEB (spec §6 : IdentitySlider +
  * ValeursGrid), composé avec le contenu UUPT :
  *
- * 1. PageHero « À propos de l'UUPT » (photo `media.about`, accroche aboutCopy) ;
+ * 1. PageHero « À propos de l'UUPT » (diaporama media.about.src + pool
+ *    calque, accroche aboutCopy) ;
  * 2. IdentitySlider sur bannière Kenté — présentation de l'Union (identité,
  *    création du 26 avril 2026 à Thiès, mission) ;
  * 3. ValeursGrid — les 4 principes de collaboration BDE (co-construction,
  *    équité, transparence, montée en compétences) ;
- * 4. bandeau CTA vers /historique et /partenaires.
+ * 4. ShowcaseCarousel — galerie « L'Union en images » (6 photos officielles) ;
+ * 5. bandeau CTA vers /historique et /partenaires.
  */
 export default function AboutPage() {
   const { lang } = useLanguage()
@@ -86,22 +98,18 @@ export default function AboutPage() {
 
   const calque = useCalquePool()
 
-  /* Image du hero : le fallback Unsplash de `media.about` est affiché tant
-     que le fichier local `public/photos/campus-thies.jpg` n'est pas fourni
-     (convention documentée dans public/photos/README.md). Pas de sonde
-     client du fichier local : tant qu'il est absent, chaque GET produirait
-     un 404 en console (prod) ou un warning MIME (dev Vite, htmlFallback).
-     TODO(UUPT) : brancher `media.about.src` (et, si besoin, une bascule
-     fallback→local) le jour où la photo officielle est livrée. */
-  const aboutImage = media.about.fallback
+  /* Diaporama du hero : la photo officielle de la page (media.about.src,
+     pool public/images) ouvre le bal, complétée par le pool calque —
+     HERO_SLIDE_COUNT photos au total (contrat « 6 par hero »). */
+  const heroImages = [media.about.src, ...calque.slice(0, HERO_SLIDE_COUNT - 1)]
 
   return (
     <>
       <JsonLd id="jsonld-page" graph={JSON_LD_GRAPH} />
 
-      {/* ===== 1 · HERO — photo de la page (media.about : fallback Unsplash
-             tant que /photos/campus-thies.jpg n'est pas fourni). ===== */}
-      <PageHero variant="photo" images={[aboutImage]}>
+      {/* ===== 1 · HERO — diaporama photo de la page (media.about.src +
+             pool calque, 6 photos) + accroche aboutCopy. ===== */}
+      <PageHero variant="photo" images={heroImages}>
         <span className="eyebrow" data-lang="fr">{aboutCopy.eyebrow.fr}</span>
         <span className="eyebrow" data-lang="en">{aboutCopy.eyebrow.en}</span>
         <h1 data-lang="fr">À propos de l’UUPT</h1>
@@ -152,14 +160,31 @@ export default function AboutPage() {
         }}
       />
 
-      {/* ===== 4 · CTA — la suite de la découverte : l'historique de la
+      {/* ===== 4 · GALERIE — « L'Union en images » : diaporama des photos
+             officielles (gallerySlides) en carte blanche. ===== */}
+      <section
+        className="section section--alt"
+        aria-label={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+      >
+        <ShowcaseCarousel
+          slides={gallerySlides}
+          eyebrowFr={galleryCopy.eyebrow.fr}
+          eyebrowEn={galleryCopy.eyebrow.en}
+          titleFr={`${galleryCopy.title.fr} ${galleryCopy.highlight?.fr ?? ''}.`}
+          titleEn={`${galleryCopy.title.en} ${galleryCopy.highlight?.en ?? ''}.`}
+          link={{ to: '/historique', fr: 'Notre historique', en: 'Our history' }}
+          ariaLabel={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+        />
+      </section>
+
+      {/* ===== 5 · CTA — la suite de la découverte : l'historique de la
              création et les BDE partenaires (bandeau photo, pool calque). ===== */}
       <section className="section">
         <div className="container">
           <div className="cta-band">
             <div
               className="cta-photo-bg cta-photo-bg--calque"
-              style={{ backgroundImage: `url("${calque[3] ?? calque[0]}")` }}
+              style={{ backgroundImage: `url("${calque[CALQUE_BAND_INDEX] ?? calque[0]}")` }}
             />
             <h2 data-lang="fr">
               Envie d’aller plus loin ? <em className="ti">Poursuivez la découverte.</em>

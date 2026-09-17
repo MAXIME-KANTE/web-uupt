@@ -2,6 +2,7 @@ import ContactForm from '../components/ContactForm'
 import PageHero from '../components/PageHero'
 import Reveal from '../components/Reveal'
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd'
+import { HERO_SLIDE_COUNT } from '../constants'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
@@ -34,7 +35,7 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd id="jsonld-page" graph={JSON_LD_GRAPH} />
-      <PageHero variant="photo" images={calque.slice(0, 3)}>
+      <PageHero variant="photo" images={calque.slice(0, HERO_SLIDE_COUNT)}>
         <span className="eyebrow" data-lang="fr">{contactCopy.eyebrow.fr}</span>
         <span className="eyebrow" data-lang="en">{contactCopy.eyebrow.en}</span>
         <h1 data-lang="fr">Contact</h1>

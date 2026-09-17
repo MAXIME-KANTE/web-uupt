@@ -6,6 +6,7 @@ import ProcessTimeline from '../components/motion/ProcessTimeline'
 import type { ProcessPhase } from '../components/motion/ProcessTimeline'
 import StatsBand from '../components/motion/StatsBand'
 import Reveal from '../components/Reveal'
+import { CALQUE_BAND_INDEX, HERO_SLIDE_COUNT } from '../constants'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
@@ -67,9 +68,9 @@ export default function HistoriquePage() {
     <>
       <JsonLd id="jsonld-page" graph={JSON_LD_GRAPH} />
 
-      {/* ===== 1 · HERO — photo du pool calque (campus/étudiants), accroche
-             narrative de la chronologie (timelineCopy). ===== */}
-      <PageHero variant="photo" images={calque.slice(0, 3)}>
+      {/* ===== 1 · HERO — diaporama du pool calque (6 photos, campus/étudiants),
+             accroche narrative de la chronologie (timelineCopy). ===== */}
+      <PageHero variant="photo" images={calque.slice(0, HERO_SLIDE_COUNT)}>
         <span className="eyebrow" data-lang="fr">{timelineCopy.eyebrow.fr}</span>
         <span className="eyebrow" data-lang="en">{timelineCopy.eyebrow.en}</span>
         <h1 data-lang="fr">Notre historique</h1>
@@ -126,7 +127,7 @@ export default function HistoriquePage() {
           <div className="cta-band">
             <div
               className="cta-photo-bg cta-photo-bg--calque"
-              style={{ backgroundImage: `url("${calque[3] ?? calque[0]}")` }}
+              style={{ backgroundImage: `url("${calque[CALQUE_BAND_INDEX] ?? calque[0]}")` }}
             />
             <h2 data-lang="fr">
               Une Union jeune, <em className="ti">déjà en mouvement.</em>

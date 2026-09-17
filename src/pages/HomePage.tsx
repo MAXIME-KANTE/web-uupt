@@ -5,14 +5,18 @@ import StatsBand from '../components/motion/StatsBand'
 import ValeursGrid from '../components/ValeursGrid'
 import type { Valeur } from '../components/ValeursGrid'
 import PolesExpertise from '../components/PolesExpertise'
+import ShowcaseCarousel from '../components/ShowcaseCarousel'
 import Marquee from '../components/Marquee'
 import Magnetic from '../components/motion/Magnetic'
 import Reveal from '../components/Reveal'
+import { CALQUE_BAND_INDEX } from '../constants'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useLanguage } from '../context/LanguageContext'
 import {
   bdePartnership,
+  galleryCopy,
+  gallerySlides,
   heroContent,
   keyStats,
   missionPillars,
@@ -88,10 +92,27 @@ export default function HomePage() {
            lien vers sa page (`/axe-*`). Cible du CTA primaire du hero. ========== */}
       <PolesExpertise />
 
-      {/* ========== 6 · MARQUEE — sigles des 8 BDE partenaires. ========== */}
+      {/* ========== 6 · GALERIE — « L'Union en images » : diaporama des
+           photos officielles (gallerySlides) en carte blanche. ========== */}
+      <section
+        className="section section--alt"
+        aria-label={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+      >
+        <ShowcaseCarousel
+          slides={gallerySlides}
+          eyebrowFr={galleryCopy.eyebrow.fr}
+          eyebrowEn={galleryCopy.eyebrow.en}
+          titleFr={`${galleryCopy.title.fr} ${galleryCopy.highlight?.fr ?? ''}.`}
+          titleEn={`${galleryCopy.title.en} ${galleryCopy.highlight?.en ?? ''}.`}
+          link={{ to: '/a-propos', fr: 'Découvrir l’Union', en: 'Discover the Union' }}
+          ariaLabel={lang === 'fr' ? 'Galerie photos de l’Union' : 'Union photo gallery'}
+        />
+      </section>
+
+      {/* ========== 7 · MARQUEE — sigles des 8 BDE partenaires. ========== */}
       <Marquee items={BDE_MARQUEE_ITEMS} />
 
-      {/* ========== 7 · COLLABORATION BDE — les 4 principes du
+      {/* ========== 8 · COLLABORATION BDE — les 4 principes du
            partenariat (bdePartnership) en cartes du gabarit. ========== */}
       <section className="section section--tribal" id="bde">
         <div className="container">
@@ -122,14 +143,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ========== 8 · CTA CONTACT — bandeau photo (pool CALQUE_IMAGES)
+      {/* ========== 9 · CTA CONTACT — bandeau photo (pool CALQUE_IMAGES)
            avant le footer. ========== */}
       <section className="section">
         <div className="container">
           <div className="cta-band">
             <div
               className="cta-photo-bg cta-photo-bg--calque"
-              style={{ backgroundImage: `url("${calque[2] ?? calque[0]}")` }}
+              style={{ backgroundImage: `url("${calque[CALQUE_BAND_INDEX] ?? calque[0]}")` }}
             />
             <h2 data-lang="fr">
               Une idée, un campus, un projet ? <em className="ti">Écrivez-nous.</em>

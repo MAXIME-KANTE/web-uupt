@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import HeroCarousel from './HeroCarousel'
 import Reveal from './Reveal'
 import type { AxeId } from '../constants'
-import { AXE_GALLERIES } from '../constants'
+import { AXE_GALLERIES, HERO_SLIDE_COUNT } from '../constants'
 import { activityAxes, axesCopy } from '../data/uuptData'
 
 interface Pole {
@@ -69,9 +69,15 @@ function CardSlideshow({ images }: { images: readonly string[] }) {
   return (
     <div ref={mediaRef} className="service-card__media" aria-hidden="true">
       {/* Vignette ~45vw sur desktop (grille 2×2) : sizes plus fin que le
-          100vw par défaut pour ne pas sur-télécharger. */}
+          100vw par défaut pour ne pas sur-télécharger. Le diaporama de la
+          carte se limite aux HERO_SLIDE_COUNT premières photos de l'axe. */}
       {near && (
-        <HeroCarousel images={images} interval={2800} fast sizes="(min-width: 561px) 45vw, 92vw" />
+        <HeroCarousel
+          images={images.slice(0, HERO_SLIDE_COUNT)}
+          interval={2800}
+          fast
+          sizes="(min-width: 561px) 45vw, 92vw"
+        />
       )}
     </div>
   )

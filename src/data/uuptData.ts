@@ -38,6 +38,8 @@ import type {
   NavLink,
   OrganizationInfo,
   Partner,
+  PartnerBde,
+  PartnerBdeSection,
   PartnerDirectory,
   RoleOption,
   SectionCopy,
@@ -45,6 +47,9 @@ import type {
   Stat,
   TimelineStep,
 } from '@/types';
+
+/* Photos officielles (public/images) — source unique du pool visuel du site. */
+import { HERO_SLIDE_COUNT, LOCAL_PHOTOS, rotatePhotos } from '@/constants';
 
 /* ==================================================================
  * DONNEES OFFICIELLES DE L'UUPT
@@ -68,12 +73,14 @@ const unsplash = (id: string, width = 1600): string =>
 
 /**
  * Chemins des medias.
- * `src`   : fichier attendu dans `public/` (voir public/photos/README.md)
- * `fallback` : image Unsplash utilisee tant que le fichier est absent
+ * `src`   : photo officielle de `public/images` (pool LOCAL_PHOTOS, constants.ts)
+ * `fallback` : image Unsplash utilisee si la photo locale venait a manquer
+ * (les heros des pages puisent directement dans le pool : voir CONTRIBUTING
+ * des images dans public/images/README.md)
  */
 export const media = {
   hero: {
-    src: '/photos/hero-bg.jpg',
+    src: LOCAL_PHOTOS[0],
     fallback: unsplash('photo-1523050854058-8df90110c9f1', 1920),
     alt: {
       fr: 'Étudiants réunis sur le parvis d’un campus universitaire',
@@ -81,7 +88,7 @@ export const media = {
     },
   },
   about: {
-    src: '/photos/campus-thies.jpg',
+    src: LOCAL_PHOTOS[3],
     fallback: unsplash('photo-1523240795612-9a054b0db644', 1200),
     alt: {
       fr: 'Étudiants travaillant ensemble sur un projet académique',
@@ -89,7 +96,7 @@ export const media = {
     },
   },
   axeAcademique: {
-    src: '/photos/axe-academique.jpg',
+    src: LOCAL_PHOTOS[0],
     fallback: unsplash('photo-1521587760476-6c12a4b040da', 900),
     alt: {
       fr: 'Salle de bibliothèque universitaire',
@@ -97,7 +104,7 @@ export const media = {
     },
   },
   axeInnovation: {
-    src: '/photos/axe-innovation.jpg',
+    src: LOCAL_PHOTOS[6],
     fallback: unsplash('photo-1518770660439-4636190af475', 900),
     alt: {
       fr: 'Composants électroniques d’un prototype étudiant',
@@ -105,7 +112,7 @@ export const media = {
     },
   },
   axeSport: {
-    src: '/photos/axe-sport.jpg',
+    src: LOCAL_PHOTOS[9],
     fallback: unsplash('photo-1546519638-68e109498ffc', 900),
     alt: {
       fr: 'Terrain de basket-ball lors d’un tournoi inter-établissements',
@@ -113,7 +120,7 @@ export const media = {
     },
   },
   panelInnovation: {
-    src: '/photos/panel-innovation.jpg',
+    src: LOCAL_PHOTOS[11],
     fallback: unsplash('photo-1475721027785-f74eccf877e2', 1200),
     alt: {
       fr: 'Panel académique étudiant sur scène',
@@ -150,10 +157,9 @@ export const organization: OrganizationInfo = {
     fr: 'Thiès, Sénégal',
     en: 'Thiès, Senegal',
   },
-  // TODO(UUPT) : remplacer par les coordonnees officielles de l'Union.
-  email: 'contact@uupt.sn',
-  phone: '+221 00 000 00 00',
-  whatsapp: '221000000000',
+  email: 'maximekante23@gmail.com',
+  phone: '+221 77 149 08 77',
+  whatsapp: '221771490877',
 };
 
 /* ------------------------- Navigation ---------------------------- */
@@ -800,6 +806,54 @@ export const partnerStatusLabels: Record<Partner['status'], LocalizedText> = {
   invite: { fr: 'Invité', en: 'Invited' },
 };
 
+/**
+ * BDE partenaires officiels de l'Union — grille `PartnerBdeGrid`.
+ * Chaque entree pointe vers le site officiel de l'etablissement ;
+ * les denominations sont des noms propres (non traduits).
+ * TODO(UUPT) : completer la liste au fil des affiliations validees.
+ */
+export const partnerBdes: PartnerBde[] = [
+  {
+    id: 'ism-thies',
+    universityName: 'ISM Thiès',
+    bdeName: 'BDE Groupe ISM Thiès',
+    location: { fr: 'Thiès, Sénégal', en: 'Thiès, Senegal' },
+    websiteUrl: 'https://www.ismthies.com/',
+    tag: { fr: 'Partenaire BDE', en: 'Partner BDE' },
+  },
+  {
+    id: 'supdeco-thies',
+    universityName: 'SUPDECO Thiès',
+    bdeName: 'BDE SUPDECO Campus Thiès',
+    location: { fr: 'Thiès, Sénégal', en: 'Thiès, Senegal' },
+    websiteUrl: 'https://supdeco.sn/lieu/thies/',
+    tag: { fr: 'Partenaire BDE', en: 'Partner BDE' },
+  },
+  {
+    id: 'ucao-isaet',
+    universityName: 'UCAO – ISAET',
+    bdeName: 'BDE UCAO ISAET Thiès',
+    location: { fr: 'Thiès, Sénégal', en: 'Thiès, Senegal' },
+    websiteUrl: 'https://ucao-isaet.com/',
+    tag: { fr: 'Partenaire BDE', en: 'Partner BDE' },
+  },
+];
+
+/** Copie de la section « BDE partenaires » (grille PartnerBdeGrid). */
+export const partnerBdeSection: PartnerBdeSection = {
+  copy: {
+    eyebrow: { fr: 'Réseau & collaborations', en: 'Network & collaborations' },
+    title: { fr: 'Les BDE partenaires de', en: 'The partner BDEs of' },
+    highlight: { fr: 'l’Union', en: 'the Union' },
+    description: {
+      fr: 'Trois établissements privés de Thiès affichent déjà leurs couleurs aux côtés de l’UUPT — découvrez leurs bureaux des étudiants et rejoignez le mouvement.',
+      en: 'Three private institutions in Thiès already stand alongside UUPT — discover their student boards and join the movement.',
+    },
+  },
+  cta: { fr: 'Visiter le site', en: 'Visit website' },
+};
+
+
 /* --------------------------- Contact ----------------------------- */
 
 export const contactCopy: SectionCopy = {
@@ -896,13 +950,127 @@ export const contactFormCopy = {
   },
 } as const;
 
+/* ------------------------ Galerie photos -------------------------- */
+
+/** Visuels du diaporama de galerie : les photos du pool qui SUIVENT le lot
+ *  reserve aux heros (voir HERO_SLIDE_COUNT / CALQUE_BAND_INDEX dans
+ *  constants.ts) — aucun doublon avec le diaporama du hero d'accueil. */
+const GALLERY_IMAGES: readonly string[] = rotatePhotos(
+  LOCAL_PHOTOS,
+  HERO_SLIDE_COUNT,
+  HERO_SLIDE_COUNT,
+);
+
+/** En-tete de la galerie « L'Union en images » (accueil, A propos, BDE
+ *  Partenaires). */
+export const galleryCopy: SectionCopy = {
+  eyebrow: { fr: 'L’Union en images', en: 'The Union in pictures' },
+  title: { fr: 'Des campus, des visages,', en: 'Campuses, faces,' },
+  highlight: { fr: 'une même énergie', en: 'one shared energy' },
+  description: {
+    fr: 'Les moments forts de la vie de l’Union : rencontres académiques, projets d’innovation, compétitions sportives et travail commun des BDE de Thiès.',
+    en: 'Highlights from the life of the Union: academic encounters, innovation projects, sports competitions and the shared work of the Thiès BDEs.',
+  },
+};
+
+/**
+ * Diaporama de la galerie — 6 visuels officiels et leurs legendes
+ * d'interface (badge, titre, accroche, texte). Consomme tel quel par le
+ * gabarit ShowcaseCarousel (pages accueil, A propos et BDE Partenaires).
+ */
+export const gallerySlides = [
+  {
+    labelFr: 'Vie de campus',
+    labelEn: 'Campus life',
+    titleFr: 'Les visages de l’Union',
+    titleEn: 'The faces of the Union',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Étudiants, délégués et membres de BDE des universités, écoles et instituts privés de Thiès.',
+    textEn:
+      'Students, delegates and BDE members from the private universities, schools and institutes of Thiès.',
+    image: GALLERY_IMAGES[0],
+    alt: 'Étudiants de l’UUPT réunis sur un campus de Thiès',
+  },
+  {
+    labelFr: 'Académique & Culturel',
+    labelEn: 'Academic & Cultural',
+    titleFr: 'Panels et débats',
+    titleEn: 'Panels and debates',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Les rendez-vous qui affûtent l’esprit critique, la culture générale et l’éloquence des étudiants.',
+    textEn:
+      'The gatherings that sharpen students’ critical thinking, general knowledge and eloquence.',
+    image: GALLERY_IMAGES[1],
+    alt: 'Panels et débats de l’axe académique et culturel de l’UUPT',
+  },
+  {
+    labelFr: 'Innovation',
+    labelEn: 'Innovation',
+    titleFr: 'Projets et prototypes',
+    titleEn: 'Projects and prototypes',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Ce que les filières techniques de nos campus conçoivent, testent et présentent au public.',
+    textEn:
+      'What the technical programmes of our campuses design, test and present to the public.',
+    image: GALLERY_IMAGES[2],
+    alt: 'Présentation de prototypes étudiants de l’axe Innovation de l’UUPT',
+  },
+  {
+    labelFr: 'Sportif',
+    labelEn: 'Sports',
+    titleFr: 'Compétitions inter-établissements',
+    titleEn: 'Inter-campus competitions',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Basket, hand et foot : la rivalité académique transformée en esprit d’équipe et en fair-play.',
+    textEn:
+      'Basketball, handball and football: academic rivalry turned into team spirit and fair play.',
+    image: GALLERY_IMAGES[3],
+    alt: 'Rencontre sportive inter-établissements de l’axe Sportif de l’UUPT',
+  },
+  {
+    labelFr: 'Collaboration BDE',
+    labelEn: 'BDE collaboration',
+    titleFr: 'Une voix par établissement',
+    titleEn: 'One voice per institution',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Les bureaux des étudiants co-construisent chaque activité avec le bureau de l’Union.',
+    textEn:
+      'Students’ unions co-build every activity together with the Union’s office.',
+    image: GALLERY_IMAGES[4],
+    alt: 'Membres de BDE en réunion de travail avec le bureau de l’UUPT',
+  },
+  {
+    labelFr: 'L’Union',
+    labelEn: 'The Union',
+    titleFr: 'Une Union jeune, déjà en mouvement',
+    titleEn: 'A young Union, already on the move',
+    subtitleFr: 'Photo officielle UUPT',
+    subtitleEn: 'Official UUPT photo',
+    textFr:
+      'Créée le 26 avril 2026 à Thiès, l’UUPT écrit sa première année d’activités avec ses campus.',
+    textEn:
+      'Founded on 26 April 2026 in Thiès, UUPT is writing its first year of activities with its campuses.',
+    image: GALLERY_IMAGES[5],
+    alt: 'Moment officiel de la vie de l’Union des Universités Privées de Thiès',
+  },
+];
+
 /* --------------------- Action flottante -------------------------- */
 
 /**
  * Bouton d'action flottant (bas de page, a droite).
  * `label` (« WhatsApp », nom de marque) n'est pas traduit.
- * TODO(UUPT) : renseigner le numero WhatsApp officiel dans
- * `organization.whatsapp` (format international sans espaces).
+ * Numéro : `organization.whatsapp` (format international sans espaces).
  */
 export const whatsappAction = {
   label: 'WhatsApp',

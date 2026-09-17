@@ -9,91 +9,194 @@ import Reveal from './Reveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useCalquePool } from '../hooks/useCalquePool'
 import { useLanguage } from '../context/LanguageContext'
-import { AXE_GALLERIES } from '../constants'
+import { AXE_GALLERIES, CALQUE_BAND_INDEX, HERO_SLIDE_COUNT } from '../constants'
 import type { AxeId } from '../constants'
 import { navLinks } from '../data/uuptData'
 import type { ActivityAxis } from '../types'
 
-/* ── Légendes de galerie (copie d'interface, une par photo d'axe) ───────
- * Les images viennent d'AXE_GALLERIES (constants.ts) — les légendes vivent
- * ici : elles décrivent le TYPE de moment photographié (illustrations
- * Unsplash en attendant les vraies photos d'événements, voir le TODO dans
- * constants.ts). L'étiquette du badge reprend le titre de l'axe. */
-const AXE_GALLERY_SLIDES: Record<AxeId, readonly ShowcaseSlide[]> = {
+/* ── Légendes du diaporama de galerie, une par photo d'axe ─────────────
+ * Les images viennent d'AXE_GALLERIES (constants.ts) : le hero de la page
+ * affiche les HERO_SLIDE_COUNT premières photos, la galerie « L'axe en
+ * images » les HERO_SLIDE_COUNT suivantes — chaque axe expose donc deux
+ * séries de 6 photos distinctes. Les quatre premières légendes reprennent
+ * les activités de l'axe (uuptData) ; les deux suivantes décrivent ses
+ * temps forts. Micro-copie d'interface, dans l'esprit des légendes
+ * d'origine du gabarit. L'étiquette du badge reprend le titre de l'axe. */
+interface AxeGalleryCaption {
+  titleFr: string
+  titleEn: string
+  textFr: string
+  textEn: string
+  alt: string
+}
+
+const AXE_GALLERY_CAPTIONS: Record<AxeId, readonly AxeGalleryCaption[]> = {
   'academique-culturel': [
     {
-      labelFr: 'Académique & Culturel',
-      labelEn: 'Academic & Cultural',
-      titleFr: 'Rencontres et émulation',
-      titleEn: 'Encounters and emulation',
-      subtitleFr: 'Photo d’illustration',
-      subtitleEn: 'Illustrative photo',
+      titleFr: 'Panels de discussion',
+      titleEn: 'Panel discussions',
       textFr:
-        'Panels, débats et formations : l’axe réunit les campus autour des grandes idées du moment.',
+        'Tables rondes thématiques réunissant étudiants, enseignants et professionnels autour des grands enjeux du Sénégal et de l’Afrique.',
       textEn:
-        'Panels, debates and training: the axis brings campuses together around the ideas of the moment.',
-      image: AXE_GALLERIES['academique-culturel'][0],
-      alt: 'Salle de bibliothèque universitaire – illustration',
+        'Thematic round tables bringing together students, teachers and professionals around the major challenges facing Senegal and Africa.',
+      alt: 'Panels de discussion de l’axe Académique & Culturel de l’UUPT',
     },
     {
-      labelFr: 'Académique & Culturel',
-      labelEn: 'Academic & Cultural',
-      titleFr: 'Éloquence et culture générale',
-      titleEn: 'Eloquence and general knowledge',
-      subtitleFr: 'Photo d’illustration',
-      subtitleEn: 'Illustrative photo',
+      titleFr: 'Sessions de formation',
+      titleEn: 'Training sessions',
       textFr:
-        'Plaidoiries et concours d’éloquence mettent en lumière les talents de chaque filière.',
+        'Ateliers pratiques : méthodologie de recherche, rédaction scientifique, communication et préparation à l’insertion professionnelle.',
       textEn:
-        'Moot courts and public-speaking contests spotlight the talents of every programme.',
-      image: AXE_GALLERIES['academique-culturel'][1],
-      alt: 'Panel académique étudiant sur scène – illustration',
+        'Hands-on workshops: research methodology, academic writing, communication and preparation for professional life.',
+      alt: 'Sessions de formation de l’axe Académique & Culturel de l’UUPT',
+    },
+    {
+      titleFr: 'Débats d’idées',
+      titleEn: 'Inter-campus debates',
+      textFr:
+        'Confrontations argumentées entre établissements sur des sujets de société, arbitrées par un jury et restituées devant le public.',
+      textEn:
+        'Reasoned confrontations between institutions on issues of society, judged by a jury and presented before the audience.',
+      alt: 'Débats inter-établissements de l’axe Académique & Culturel de l’UUPT',
+    },
+    {
+      titleFr: 'Concours de plaidoirie',
+      titleEn: 'Moot court competitions',
+      textFr:
+        'Compétition d’éloquence et de droit réservée aux filières juridiques, évaluée par des praticiens du barreau et de la magistrature.',
+      textEn:
+        'An eloquence and law competition reserved for legal programmes, judged by practitioners from the bar and the bench.',
+      alt: 'Concours de plaidoirie de l’axe Académique & Culturel de l’UUPT',
+    },
+    {
+      titleFr: 'Culture générale et éloquence',
+      titleEn: 'General knowledge and eloquence',
+      textFr:
+        'Quiz, joutes verbales et veillées culturelles donnent à chaque filière l’occasion de se distinguer.',
+      textEn:
+        'Quizzes, verbal jousts and cultural evenings give every programme a chance to stand out.',
+      alt: 'Épreuve de culture générale de l’axe Académique & Culturel de l’UUPT',
+    },
+    {
+      titleFr: 'Restitution publique',
+      titleEn: 'Public presentation',
+      textFr:
+        'Les travaux de l’année sont présentés aux étudiants, aux directions et aux partenaires de l’Union.',
+      textEn:
+        'The year’s work is presented to students, management and the Union’s partners.',
+      alt: 'Restitution publique des travaux de l’axe Académique & Culturel de l’UUPT',
     },
   ],
   innovation: [
     {
-      labelFr: 'Innovation',
-      labelEn: 'Innovation',
-      titleFr: 'Prototypes en exposition',
-      titleEn: 'Prototypes on display',
-      subtitleFr: 'Photo d’illustration',
-      subtitleEn: 'Illustrative photo',
+      titleFr: 'Expositions des projets étudiants',
+      titleEn: 'Student project exhibitions',
       textFr:
-        'Les filières techniques présentent leurs réalisations : maquettes, logiciels et objets connectés.',
+        'Galeries techniques où chaque établissement présente ses prototypes, maquettes et travaux de fin de cycle au grand public.',
       textEn:
-        'The technical programmes present their work: scale models, software and connected devices.',
-      image: AXE_GALLERIES.innovation[0],
-      alt: 'Composants électroniques d’un prototype étudiant – illustration',
+        'Technical galleries where each institution presents its prototypes, scale models and final-year projects to the general public.',
+      alt: 'Exposition des projets étudiants de l’axe Innovation de l’UUPT',
     },
     {
-      labelFr: 'Innovation',
-      labelEn: 'Innovation',
-      titleFr: 'Démonstrations et rencontres',
-      titleEn: 'Demonstrations and encounters',
-      subtitleFr: 'Photo d’illustration',
-      subtitleEn: 'Illustrative photo',
+      titleFr: 'Démonstrations en direct',
+      titleEn: 'Live demonstrations',
       textFr:
-        'Démonstrations en direct et rencontres avec l’écosystème pour faire mûrir les projets étudiants.',
+        'Sessions de démonstration et de tests de solutions numériques, robotiques et énergétiques développées par les étudiants.',
       textEn:
-        'Live demonstrations and meetings with the ecosystem to help student projects mature.',
-      image: AXE_GALLERIES.innovation[1],
-      alt: 'Étudiants travaillant ensemble sur un projet technique – illustration',
+        'Demonstration and testing sessions for the digital, robotic and energy solutions developed by students.',
+      alt: 'Démonstration en direct de l’axe Innovation de l’UUPT',
+    },
+    {
+      titleFr: 'Rencontres avec l’écosystème',
+      titleEn: 'Meetings with the ecosystem',
+      textFr:
+        'Mise en relation avec les entreprises, incubateurs et institutions pour accélérer la maturation des projets présentés.',
+      textEn:
+        'Connecting students with companies, incubators and institutions to accelerate the maturation of the projects presented.',
+      alt: 'Rencontre avec l’écosystème de l’axe Innovation de l’UUPT',
+    },
+    {
+      titleFr: 'Concours d’innovation',
+      titleEn: 'Innovation competitions',
+      textFr:
+        'Distinction des meilleures créations par un jury mixte, réunissant enseignants-chercheurs et professionnels du secteur.',
+      textEn:
+        'The best creations are recognised by a mixed jury of teacher-researchers and industry professionals.',
+      alt: 'Concours d’innovation de l’axe Innovation de l’UUPT',
+    },
+    {
+      titleFr: 'Ateliers de prototypage',
+      titleEn: 'Prototyping workshops',
+      textFr:
+        'Impression 3D, électronique embarquée et développement logiciel : les campus outillent leurs idées avant les concours.',
+      textEn:
+        '3D printing, embedded electronics and software development: campuses equip their ideas before the competitions.',
+      alt: 'Atelier de prototypage de l’axe Innovation de l’UUPT',
+    },
+    {
+      titleFr: 'Solutions pour Thiès',
+      titleEn: 'Solutions for Thiès',
+      textFr:
+        'Des projets pensés pour les besoins réels de la ville : énergie, mobilité et services numériques.',
+      textEn:
+        'Projects designed around the city’s real needs: energy, mobility and digital services.',
+      alt: 'Présentation de solutions locales de l’axe Innovation de l’UUPT',
     },
   ],
   sportif: [
     {
-      labelFr: 'Sportif',
-      labelEn: 'Sports',
       titleFr: 'Tournois inter-établissements',
       titleEn: 'Inter-campus tournaments',
-      subtitleFr: 'Photo d’illustration',
-      subtitleEn: 'Illustrative photo',
       textFr:
-        'Basket, hand et foot : les équipes engagées par les BDE s’affrontent dans un esprit de fair-play.',
+        'Championnats organisés par l’UUPT réunissant les équipes engagées par chaque BDE affilié.',
       textEn:
-        'Basketball, handball and football: the teams entered by the BDEs compete in a spirit of fair play.',
-      image: AXE_GALLERIES.sportif[0],
-      alt: 'Terrain de basket-ball lors d’un tournoi inter-établissements – illustration',
+        'Championships organised by UUPT bringing together the teams entered by each affiliated BDE.',
+      alt: 'Tournoi inter-établissements de l’axe Sportif de l’UUPT',
+    },
+    {
+      titleFr: 'Basket-ball',
+      titleEn: 'Basketball',
+      textFr:
+        'Compétition phare des campus thiessois, disputée en gymnase avec arbitrage officiel et supporters des deux camps.',
+      textEn:
+        'The flagship competition of the Thiès campuses, played indoors with official refereeing and supporters from both sides.',
+      alt: 'Match de basket-ball de l’axe Sportif de l’UUPT',
+    },
+    {
+      titleFr: 'Handball',
+      titleEn: 'Handball',
+      textFr:
+        'Format de tournoi à élimination directe favorisant l’intensité, la discipline collective et la cohésion d’équipe.',
+      textEn:
+        'A knockout tournament format that favours intensity, collective discipline and team cohesion.',
+      alt: 'Match de handball de l’axe Sportif de l’UUPT',
+    },
+    {
+      titleFr: 'Football',
+      titleEn: 'Football',
+      textFr:
+        'Le rendez-vous le plus attendu de l’année, véritable ciment social entre les établissements privés de Thiès.',
+      textEn:
+        'The most eagerly awaited event of the year, a true social bond between the private institutions of Thiès.',
+      alt: 'Match de football de l’axe Sportif de l’UUPT',
+    },
+    {
+      titleFr: 'Esprit d’équipe et fair-play',
+      titleEn: 'Team spirit and fair play',
+      textFr:
+        'Arbitrage officiel, supporters des deux camps et respect des adversaires : les règles communes à tous les campus.',
+      textEn:
+        'Official refereeing, supporters from both sides and respect for opponents: the rules shared by every campus.',
+      alt: 'Esprit d’équipe de l’axe Sportif de l’UUPT',
+    },
+    {
+      titleFr: 'Remise des trophées',
+      titleEn: 'Trophy ceremony',
+      textFr:
+        'Chaque saison s’achève par la remise des trophées aux équipes et aux BDE les plus engagés.',
+      textEn:
+        'Every season ends with trophies awarded to the most committed teams and BDEs.',
+      alt: 'Remise des trophées de l’axe Sportif de l’UUPT',
     },
   ],
 }
@@ -109,14 +212,15 @@ interface AxePageTemplateProps {
  * (`GenieCivilPage.tsx`) :
  *
  * 1. Hero « Contraste Typographique Massif » (HeroPoleBold) — diaporama de
- *    la galerie de l'axe (AXE_GALLERIES, la 1re image ouvre le bal), surtitre
+ *    HERO_SLIDE_COUNT photos de l'axe (AXE_GALLERIES[0 … 5]), surtitre
  *    « Axe 01 — … » (activityAxes.order), titre = tagline, accroche = la
  *    description courte de la navigation, CTA « Participer aux activités » ;
  * 2. Présentation — activityAxes.description sur fond quadrillé tribal
  *    (la section remonte en carte claire sur le hero, pattern REF) ;
  * 3. Activités — les sous-champs d'activités de l'axe (uuptData) en
  *    accordéon de cartes extensibles (PrestationsAccordion) ;
- * 4. Galerie — AXE_GALLERIES[axe] en carrousel ShowcaseCarousel ;
+ * 4. Galerie — les HERO_SLIDE_COUNT photos SUIVANTES de l'axe en carrousel
+ *    (ShowcaseCarousel) : la page expose ainsi 12 photos distinctes ;
  * 5. CTA — « Participer aux activités » → /contact et
  *    « Découvrir les BDE » → /partenaires sur bandeau photo de l'axe.
  *
@@ -128,7 +232,28 @@ export default function AxePageTemplate({ axe }: AxePageTemplateProps) {
   const { lang } = useLanguage()
   const axeId = axe.id as AxeId
   const gallery = AXE_GALLERIES[axeId]
-  const slides = AXE_GALLERY_SLIDES[axeId]
+  /* Hero : les HERO_SLIDE_COUNT premières photos de l'axe (6).
+   * Galerie : les HERO_SLIDE_COUNT suivantes, légendées (6). */
+  const heroImages = gallery.slice(0, HERO_SLIDE_COUNT)
+  const captions = AXE_GALLERY_CAPTIONS[axeId]
+  const slides: readonly ShowcaseSlide[] = gallery
+    .slice(HERO_SLIDE_COUNT, HERO_SLIDE_COUNT + captions.length)
+    .map((image, index) => {
+      const caption = captions[index]
+      const position = String(index + 1).padStart(2, '0')
+      return {
+        labelFr: axe.title.fr,
+        labelEn: axe.title.en,
+        titleFr: caption.titleFr,
+        titleEn: caption.titleEn,
+        subtitleFr: `Photo ${position} · ${axe.title.fr}`,
+        subtitleEn: `Photo ${position} · ${axe.title.en}`,
+        textFr: caption.textFr,
+        textEn: caption.textEn,
+        image,
+        alt: caption.alt,
+      }
+    })
 
   usePageMeta(
     lang === 'fr' ? `Axe ${axe.title.fr} – UUPT` : `${axe.title.en} axis – UUPT`,
@@ -149,16 +274,18 @@ export default function AxePageTemplate({ axe }: AxePageTemplateProps) {
     descEn: activity.description.en,
   }))
 
-  /* Fonds de bande CTA : photos de l'axe uniquement (jamais un terrain de
-   * sport sur la page Innovation — contrat documenté dans useCalquePool). */
+  /* Fonds de bande CTA : photos de l'axe (rotation AXE_GALLERIES[axe]),
+   * index CALQUE_BAND_INDEX — juste après le lot du hero, donc jamais l'une
+   * des photos déjà affichées par le diaporama de la page. */
   const axePool = useCalquePool(gallery)
 
   return (
     <>
-      {/* ===== 1 · HERO — diaporama de l'axe, surtitre « Axe 01 — … »,
-             titre = tagline, sentinelle inclus (HeroPoleBold). ===== */}
+      {/* ===== 1 · HERO — diaporama de l'axe (HERO_SLIDE_COUNT photos),
+             surtitre « Axe 01 — … », titre = tagline, sentinelle inclus
+             (HeroPoleBold). ===== */}
       <HeroPoleBold
-        images={gallery}
+        images={heroImages}
         ariaLabel={`UUPT — Axe ${axe.order} ${axe.title.fr}`}
         eyebrowFr={`Axe ${axe.order} — ${axe.title.fr}`}
         eyebrowEn={`Axis ${axe.order} — ${axe.title.en}`}
@@ -196,8 +323,8 @@ export default function AxePageTemplate({ axe }: AxePageTemplateProps) {
         }}
       />
 
-      {/* ===== 4 · GALERIE — AXE_GALLERIES[axe] en carrousel (légendes du
-             gabarit ; la carte blanche signe la rupture claire). ===== */}
+      {/* ===== 4 · GALERIE — les 6 photos suivantes de l'axe en carrousel
+             (légendes du gabarit ; la carte blanche signe la rupture claire). ===== */}
       <section className="section section--alt" aria-label={lang === 'fr' ? 'Galerie de l’axe' : 'Axis gallery'}>
         <ShowcaseCarousel
           slides={slides}
@@ -216,7 +343,7 @@ export default function AxePageTemplate({ axe }: AxePageTemplateProps) {
           <div className="cta-band">
             <div
               className="cta-photo-bg cta-photo-bg--calque"
-              style={{ backgroundImage: `url("${axePool[3] ?? axePool[0]}")` }}
+              style={{ backgroundImage: `url("${axePool[CALQUE_BAND_INDEX] ?? axePool[0]}")` }}
             />
             <h2 data-lang="fr">Envie de participer à cet axe ?</h2>
             <h2 data-lang="en">Want to take part in this axis?</h2>
