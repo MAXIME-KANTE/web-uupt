@@ -1,0 +1,14 @@
+# Référence de design (matière première, hors produit)
+SALEEL WEB V1/
+SALEEL WEB V1.zip
+
+# Dépendances et builds
+node_modules/
+dist/
+
+# Captures et outils locaux
+.shots/
+
+# Système
+.DS_Store
+Thumbs.db

@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================================================================
+   UUPT — Design system (style corporate, accent bleu)
+   ================================================================== */
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-white font-sans text-[0.98rem] leading-relaxed text-slate-600 antialiased;
+  }
+
+  /* Chaque section ciblee par la navigation tient compte de la navbar fixe */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold tracking-tight text-slate-900;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    @apply bg-blue-600/25 text-slate-900;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-blue-600 ring-offset-2 ring-offset-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-300;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+
+  /* Respect de la preference systeme "reduire les animations" */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Conteneur de page centralise */
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+
+  /* Sur-titre en majuscules (style corporate) */
+  .eyebrow {
+    @apply text-[0.7rem] font-semibold uppercase tracking-[0.22em];
+  }
+
+  /* Carte blanche standard (sections claires) */
+  .surface-card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300;
+  }
+
+  /* Carte translucide (sections sombres) */
+  .dark-card {
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md;
+  }
+
+  /* Soulignement anime des liens de navigation */
+  .nav-underline::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 h-[2px] w-0 bg-blue-600 transition-all duration-300;
+  }
+
+  .nav-underline:hover::after,
+  .nav-underline[data-active='true']::after {
+    @apply w-full;
+  }
+}
+
+@layer utilities {
+  /* Ombres de texte pour la lisibilite du hero sur photo */
+  .text-shadow-strong {
+    text-shadow: 0 2px 20px rgb(0 0 0 / 0.55);
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+}
