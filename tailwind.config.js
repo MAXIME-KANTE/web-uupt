@@ -3,6 +3,24 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      /* Tokens miroirs de :root (App.css) — spec §5. Le config d'origine UUPT
+         ne les portait pas : les utilities `bg-night`, `text-ink`, `bg-brand`
+         des composants copiés de SALEEL (ValeursGrid, PrestationsAccordion,
+         ProgrammesGrid, cartes partenaires) étaient silencieusement absentes
+         du CSS généré. Garder ce bloc synchronisé avec :root (App.css). */
+      colors: {
+        ink: '#16213a', // --fg : encre navy
+        muted: '#5c6470', // --fg-muted : gris ardoise
+        subtle: '#5f6b7a', // --fg-subtle
+        cream: '#fdfcfa', // --bg : blanc chaud
+        sand: '#f0ebdf', // --sand
+        line: '#e7e4dd', // --border
+        night: '#0f172a', // --bg-dark
+        brand: {
+          DEFAULT: '#f97316', // --primary (ACCENT uniquement)
+          dark: '#ea6c0a', // --primary-dark
+        },
+      },
       fontFamily: {
         // Inter pour le texte courant, Manrope pour les titres (style corporate)
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
