@@ -12,16 +12,17 @@ interface DrawerLink {
   en: string
 }
 
-const POLE_ITEMS: readonly DrawerLink[] = [
-  { to: '/genie-civil', fr: 'Génie Civil', en: 'Civil Engineering' },
-  { to: '/immobilier', fr: 'Immobilier', en: 'Real Estate' },
-  { to: '/comptabilite', fr: 'Comptabilité', en: 'Accounting' },
-  { to: '/numerique', fr: 'Numérique', en: 'Digital' },
+const AXE_ITEMS: readonly DrawerLink[] = [
+  { to: '/axe-academique-culturel', fr: 'Académique & Culturel', en: 'Academic & Cultural' },
+  { to: '/axe-innovation', fr: 'Innovation', en: 'Innovation' },
+  { to: '/axe-sportif', fr: 'Sportif', en: 'Sports' },
 ]
 
-const GROUP_ITEMS: readonly DrawerLink[] = [
-  { to: '/realisations', fr: 'Réalisations', en: 'Achievements' },
+const MAIN_ITEMS: readonly DrawerLink[] = [
+  { to: '/', fr: 'Accueil', en: 'Home' },
   { to: '/a-propos', fr: 'À propos', en: 'About' },
+  { to: '/historique', fr: 'Historique', en: 'History' },
+  { to: '/partenaires', fr: 'BDE Partenaires', en: 'Partner BDEs' },
   { to: '/contact', fr: 'Contact', en: 'Contact' },
 ]
 
@@ -33,7 +34,8 @@ interface MobileDrawerProps {
 /**
  * Tiroir de navigation mobile — feuille latérale droite en trois zones :
  * tête (logo = retour Accueil + fermeture), corps défilant (liens groupés
- * « Nos pôles » / « Le groupe »), pied épinglé (CTA, langue FR|EN, réseaux).
+ * « Nos Axes » — sous-liens indentés — / « Navigation »), pied épinglé
+ * (CTA, langue FR|EN, réseaux).
  * Comportements préservés : ouverture/fermeture, touche Échap, blocage du
  * scroll (body + instance Lenis), focus initial sur le bouton de fermeture
  * et piège de focus dans le dialog.
@@ -93,6 +95,10 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const linkClassName = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'drawer-item active' : 'drawer-item'
 
+  // Sous-liens d'axes : même item que la navigation, indenté (drawer-sublink).
+  const sublinkClassName = ({ isActive }: { isActive: boolean }) =>
+    isActive ? 'drawer-item drawer-sublink active' : 'drawer-item drawer-sublink'
+
   return (
     <div
       ref={drawerRef}
@@ -111,7 +117,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       />
       <div className="drawer-panel">
         <div className="drawer-head">
-          <Link to="/" aria-label="SALEEL GROUPE — Accueil" onClick={onClose}>
+          <Link to="/" aria-label="UUPT — Accueil" onClick={onClose}>
             <BrandLogo variant="drawer" />
           </Link>
           <button
@@ -135,24 +141,30 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           aria-label={lang === 'fr' ? 'Navigation mobile' : 'Mobile navigation'}
         >
           <p className="drawer-group-label">
-            <span data-lang="fr">Nos pôles</span>
-            <span data-lang="en">Our divisions</span>
+            <span data-lang="fr">Nos Axes</span>
+            <span data-lang="en">Our Axes</span>
           </p>
           <div className="drawer-group">
-            {POLE_ITEMS.map((item) => (
-              <NavLink key={item.to} to={item.to} className={linkClassName} onClick={onClose}>
+            {AXE_ITEMS.map((item) => (
+              <NavLink key={item.to} to={item.to} className={sublinkClassName} onClick={onClose}>
                 <span data-lang="fr">{item.fr}</span>
                 <span data-lang="en">{item.en}</span>
               </NavLink>
             ))}
           </div>
           <p className="drawer-group-label">
-            <span data-lang="fr">Le groupe</span>
-            <span data-lang="en">The group</span>
+            <span data-lang="fr">Navigation</span>
+            <span data-lang="en">Navigation</span>
           </p>
           <div className="drawer-group">
-            {GROUP_ITEMS.map((item) => (
-              <NavLink key={item.to} to={item.to} className={linkClassName} onClick={onClose}>
+            {MAIN_ITEMS.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={linkClassName}
+                onClick={onClose}
+              >
                 <span data-lang="fr">{item.fr}</span>
                 <span data-lang="en">{item.en}</span>
               </NavLink>

@@ -13,17 +13,21 @@ interface NavItem {
 
 const NAV_ITEMS: readonly NavItem[] = [
   { to: '/', fr: 'Accueil', en: 'Home' },
-  { to: '/genie-civil', fr: 'Génie Civil', en: 'Civil Engineering' },
-  { to: '/immobilier', fr: 'Immobilier', en: 'Real Estate' },
-  { to: '/comptabilite', fr: 'Comptabilité', en: 'Accounting' },
-  { to: '/numerique', fr: 'Numérique', en: 'Digital' },
-  { to: '/realisations', fr: 'Réalisations', en: 'Achievements' },
   { to: '/a-propos', fr: 'À propos', en: 'About' },
+  { to: '/historique', fr: 'Historique', en: 'History' },
+  { to: '/partenaires', fr: 'BDE Partenaires', en: 'Partner BDEs' },
+]
+
+const AXES_MENU: readonly { to: string; fr: string; en: string }[] = [
+  { to: '/axe-academique-culturel', fr: 'Académique & Culturel', en: 'Academic & Cultural' },
+  { to: '/axe-innovation', fr: 'Innovation', en: 'Innovation' },
+  { to: '/axe-sportif', fr: 'Sportif', en: 'Sports' },
 ]
 
 export default function Navbar() {
   const { lang, toggleLang } = useLanguage()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [axesOpen, setAxesOpen] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const location = useLocation()
@@ -108,11 +112,13 @@ export default function Navbar() {
     }
   }, [location.pathname])
 
-  // Ferme le drawer après chaque navigation : le rideau de transition
-  // intercepte les clics en capture (les onClick de fermeture des liens ne
-  // tournent plus), la fermeture a lieu sous couverture, invisible.
+  // Ferme le drawer et le menu déroulant « Nos Axes » après chaque
+  // navigation : le rideau de transition intercepte les clics en capture
+  // (les onClick de fermeture des liens ne tournent plus), la fermeture a
+  // lieu sous couverture, invisible.
   useEffect(() => {
     setDrawerOpen(false)
+    setAxesOpen(false)
   }, [location.pathname])
 
   // « Hide on scroll down / show on scroll up » : dès que l'utilisateur scrolle
@@ -165,7 +171,7 @@ export default function Navbar() {
       <header ref={headerRef} className="site-header site-header--overlay" id="siteHeader">
         <div className="site-header__inner">
           {/* Marque */}
-          <Link to="/" className="brand" aria-label="SALEEL GROUPE — Accueil">
+          <Link to="/" className="brand" aria-label="UUPT — Accueil">
             <BrandLogo variant="header" priority />
           </Link>
 
@@ -191,6 +197,43 @@ export default function Navbar() {
                 </NavLink>
               </Fragment>
             ))}
+            <div className="nav-dropdown">
+              <button
+                type="button"
+                className={`nav-dropdown__trigger${location.pathname.startsWith('/axe-') ? ' active' : ''}`}
+                aria-haspopup="true"
+                aria-expanded={axesOpen}
+                onClick={() => setAxesOpen((v) => !v)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) setAxesOpen(false)
+                }}
+              >
+                <span data-lang="fr">Nos Axes</span>
+                <span data-lang="en">Our Axes</span>
+              </button>
+              <div className={`nav-dropdown__panel${axesOpen ? ' is-open' : ''}`} role="menu">
+                {AXES_MENU.map((axe) => (
+                  <Fragment key={axe.to}>
+                    <NavLink
+                      to={axe.to}
+                      className={({ isActive }) => `nav-dropdown__link${isActive ? ' active' : ''}`}
+                      data-lang="fr"
+                      onClick={() => setAxesOpen(false)}
+                    >
+                      {axe.fr}
+                    </NavLink>
+                    <NavLink
+                      to={axe.to}
+                      className={({ isActive }) => `nav-dropdown__link${isActive ? ' active' : ''}`}
+                      data-lang="en"
+                      onClick={() => setAxesOpen(false)}
+                    >
+                      {axe.en}
+                    </NavLink>
+                  </Fragment>
+                ))}
+              </div>
+            </div>
           </nav>
 
           {/* Actions */}
