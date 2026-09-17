@@ -101,7 +101,7 @@ PageVeil
 ## 10. SEO, build et prérendu
 
 - `usePageMeta` sur chaque page (titre/description FR+EN), JSON-LD `EducationalOrganization` (nom, logo `dame.png`, date de fondation 2026-04-26, adresse Thiès Sénégal, `sameAs` réseaux) + `WebSite`.
-- `sitemap.xml` (11 URLs, hors 404) + `robots.txt`.
+- `sitemap.xml` (10 URLs — `/merci` est noindex et hors sitemap/prérendu, comme chez SALEEL) + `robots.txt` (Disallow `/merci`).
 - `scripts/prerender.mjs` adapté aux 12 routes (404 → `404.html`) ; `SITE_URL` injecté partout depuis `constants.ts`.
 
 ## 11. Cas limites et comportements dégradés
