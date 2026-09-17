@@ -209,7 +209,7 @@ export default function PageVeil() {
     <>
       <motion.div ref={veilRef} className="page-veil" style={{ clipPath: clip }} aria-hidden="true">
         <motion.p className="page-veil__mark" style={{ opacity: markOpacity }}>
-          SALEEL GROUPE
+          UUPT
         </motion.p>
       </motion.div>
       <motion.div

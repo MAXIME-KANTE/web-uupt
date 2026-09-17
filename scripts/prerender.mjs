@@ -6,7 +6,8 @@
  * (networkidle + preloader terminé — min 0,9 s / plafond 2,6 s — + marge),
  * puis sauvegarde le HTML rendu :
  *
- *   dist/<route>/index.html   (10 routes indexables — PAS /merci, noindex)
+ *   dist/<route>/index.html   (10 routes indexables — /merci est exclue du
+ *                              prérendu et du sitemap, SANS balise noindex)
  *   dist/404.html             (route inconnue → NotFoundPage rendue)
  *
  * Le HTML sauvegardé reçoit `window.__PRERENDERED__ = true` : le Preloader
@@ -30,7 +31,8 @@ const PORT = Number(process.env.PRERENDER_PORT || 4317)
 const DIST = path.resolve('dist')
 const SETTLE_MS = 2600 // preloader : min 0,9 s / plafond 2,6 s + fondu 640 ms
 
-// Routes indexables uniquement (/merci est noindex et hors sitemap).
+// Routes indexables uniquement (/merci : hors sitemap et hors prérendu —
+// volontairement SANS meta robots, l'exclusion est purement infrastructure).
 const ROUTES = [
   '/',
   '/axe-academique-culturel',

@@ -63,6 +63,7 @@ export default function PrivacyPage() {
               <ul>
                 <li>Nom complet</li>
                 <li>Adresse email</li>
+                <li>Établissement (optionnel)</li>
                 <li>Qualité (étudiant, membre ou président de BDE, direction d'établissement, enseignant, partenaire — optionnel)</li>
                 <li>Contenu du message</li>
               </ul>
@@ -154,6 +155,7 @@ export default function PrivacyPage() {
               <ul>
                 <li>Full name</li>
                 <li>Email address</li>
+                <li>Institution (optional)</li>
                 <li>Role (student, BDE member or president, institution leadership, teacher, partner — optional)</li>
                 <li>Message content</li>
               </ul>

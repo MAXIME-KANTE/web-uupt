@@ -41,7 +41,10 @@ export function usePageMeta(title: string, description?: string, noindex = false
     // ── Canonical : suit la route courante (sans query ni hash) ───
     setLink('canonical', window.location.origin + window.location.pathname)
 
-    // ── Robots : noindex pour les pages utilitaires (merci, 404) ──
+    // ── Robots : noindex pour les pages utilitaires (404) ──
+    // (NB : /merci n'est PAS noindex — ruling plan T8 : tenue à l'écart des
+    // moteurs par les moyens d'infrastructure seulement, hors sitemap.xml et
+    // hors prérendu, sans balise robots.)
     if (noindex) {
       setMeta('name', 'robots', 'noindex, follow')
     } else {

@@ -137,7 +137,7 @@ export const organization: OrganizationInfo = {
   },
   createdAt: '2026-04-26',
   createdLabel: {
-    fr: '26 Avril 2026',
+    fr: '26 avril 2026',
     en: '26 April 2026',
   },
   city: 'Thiès',
