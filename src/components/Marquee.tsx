@@ -1,54 +1,33 @@
-import { useLanguage } from '../context/LanguageContext'
-
-const WORDS_FR: readonly string[] = [
-  'Génie Civil',
-  'Immobilier',
-  'Comptabilité',
-  'Numérique',
-  'Rigueur',
-  'Intégrité',
-  'Innovation',
-  'Excellence',
-  'Thiès · Sénégal',
-]
-
-const WORDS_EN: readonly string[] = [
-  'Civil Engineering',
-  'Real Estate',
-  'Accounting',
-  'Digital',
-  'Rigour',
-  'Integrity',
-  'Innovation',
-  'Excellence',
-  'Thiès · Senegal',
-]
+interface MarqueeProps {
+  /** Mots défilants — noms propres non traduits (sigles des BDE, etc.) :
+   * la piste est identique dans les deux langues. */
+  items: readonly string[]
+}
 
 /**
- * Bandeau défilant infini (métiers & valeurs). La piste est composée de deux
- * moitiés identiques pour une boucle sans couture (translateX(-50 %)) ;
- * l’animation CSS se met en pause au survol et est désactivée sous
- * `prefers-reduced-motion` (voir App.css).
+ * Bandeau défilant infini (noms des BDE partenaires sur l'accueil UUPT).
+ * La piste est composée de deux moitiés identiques pour une boucle sans
+ * couture (translateX(-50 %)) ; l’animation CSS se met en pause au survol
+ * et est désactivée sous `prefers-reduced-motion` (voir App.css).
+ *
+ * Remarque : fournir une séquence suffisamment longue (≥ largeur d'un
+ * écran large, quitte à répéter la liste) — sinon la boucle laisse un vide
+ * à droite sur les grands viewports.
  */
-export default function Marquee() {
-  const { lang } = useLanguage()
-  const words = lang === 'en' ? WORDS_EN : WORDS_FR
-
+export default function Marquee({ items }: MarqueeProps) {
   return (
     <div className="marquee" aria-hidden="true">
-      {/* key={lang} : la piste est remontée au changement de langue (les deux
-          langues n’ont pas la même largeur de contenu). */}
-      <div className="marquee__track" key={lang}>
+      <div className="marquee__track">
         <div className="marquee__half">
-          {words.map((word) => (
-            <span key={word} className="marquee__item">
+          {items.map((word, index) => (
+            <span key={`${word}-${index}`} className="marquee__item">
               {word}
             </span>
           ))}
         </div>
         <div className="marquee__half">
-          {words.map((word) => (
-            <span key={word} className="marquee__item">
+          {items.map((word, index) => (
+            <span key={`${word}-${index}`} className="marquee__item">
               {word}
             </span>
           ))}

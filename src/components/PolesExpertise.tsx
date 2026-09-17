@@ -5,6 +5,7 @@ import HeroCarousel from './HeroCarousel'
 import Reveal from './Reveal'
 import type { AxeId } from '../constants'
 import { AXE_GALLERIES } from '../constants'
+import { activityAxes, axesCopy } from '../data/uuptData'
 
 interface Pole {
   id: AxeId
@@ -17,40 +18,20 @@ interface Pole {
 }
 
 /**
- * Les trois axes d'activités de l'UUPT (source : `activityAxes` de
- * `src/data/uuptData.ts`) — seul l'habillage SALEEL change : cartes blanches.
- * TODO(UUPT) : piloter ces cartes depuis uuptData (tâche dédiée accueil) ;
- * les libellés EN ci-dessous sont provisoires.
+ * Les trois axes d'activités de l'UUPT — cartes dérivées de `activityAxes`
+ * (source : `src/data/uuptData.ts`) : numéro d'ordre, titre, tagline et
+ * route `/axe-<id>` de chaque axe. L'en-tête de section vient d'`axesCopy`.
  */
-const POLES: readonly Pole[] = [
-  {
-    id: 'academique-culturel',
-    num: '01',
-    to: '/axe-academique-culturel',
-    titleFr: 'Académique & Culturel',
-    titleEn: 'Academic & Cultural',
-    descFr: 'La parole comme premier talent.',
-    descEn: 'Words as our first talent.',
-  },
-  {
-    id: 'innovation',
-    num: '02',
-    to: '/axe-innovation',
-    titleFr: 'Innovation',
-    titleEn: 'Innovation',
-    descFr: 'Montrer ce que nos campus savent construire.',
-    descEn: 'Showcasing what our campuses can build.',
-  },
-  {
-    id: 'sportif',
-    num: '03',
-    to: '/axe-sportif',
-    titleFr: 'Sportif',
-    titleEn: 'Sports',
-    descFr: 'La cohésion se construit sur le terrain.',
-    descEn: 'Cohesion is built on the field.',
-  },
-]
+const POLES: readonly Pole[] = activityAxes.map((axis) => ({
+  // Les ids de `activityAxes` sont alignés sur les clés d'`AXE_GALLERIES`.
+  id: axis.id as AxeId,
+  num: axis.order,
+  to: `/axe-${axis.id}`,
+  titleFr: axis.title.fr,
+  titleEn: axis.title.en,
+  descFr: axis.tagline.fr,
+  descEn: axis.tagline.en,
+}))
 
 /**
  * Mini-diaporama d'une carte pôle : le HeroCarousel n'est monté que lorsque
@@ -97,32 +78,29 @@ function CardSlideshow({ images }: { images: readonly string[] }) {
 }
 
 /**
- * Section « Nos axes » de l'accueil — trois cartes BLANCHES (plus d'aplats
- * colorés) dont chacune porte un mini-diaporama rapide des images de son
- * axe. La couleur vient des photographies, le reste de la carte reste encre
- * sur blanc (variante `.service-card--ink`).
+ * Section « Nos axes » de l'accueil — trois cartes BLANCHES dont chacune
+ * porte un mini-diaporama rapide des images de son axe (`AXE_GALLERIES`).
+ * La couleur vient des photographies, le reste de la carte reste encre
+ * sur blanc (variante `.service-card--ink`). L'ancre `id="poles"` est la
+ * cible du CTA primaire du hero.
  */
 export default function PolesExpertise() {
   return (
     <section className="section section--tribal" id="poles">
       <div className="container">
         <Reveal className="section-heading section-heading--center">
-          <span className="eyebrow" data-lang="fr">Nos axes d’activités</span>
-          <span className="eyebrow" data-lang="en">Our activity axes</span>
+          <span className="eyebrow" data-lang="fr">{axesCopy.eyebrow.fr}</span>
+          <span className="eyebrow" data-lang="en">{axesCopy.eyebrow.en}</span>
           <h2 data-lang="fr">
-            Trois leviers pour <em className="ti">faire grandir la jeunesse.</em>
+            {axesCopy.title.fr}{' '}
+            <em className="ti">{axesCopy.highlight ? `${axesCopy.highlight.fr}.` : ''}</em>
           </h2>
           <h2 data-lang="en">
-            Three levers to <em className="ti">grow the youth.</em>
+            {axesCopy.title.en}{' '}
+            <em className="ti">{axesCopy.highlight ? `${axesCopy.highlight.en}.` : ''}</em>
           </h2>
-          <p data-lang="fr">
-            L’Union concentre son action sur trois axes complémentaires, pilotés avec les BDE de
-            chaque établissement selon un calendrier annuel et des livrables concrets.
-          </p>
-          <p data-lang="en">
-            The Union focuses on three complementary axes, run with each school’s student board
-            (BDE) on an annual calendar with concrete deliverables.
-          </p>
+          <p data-lang="fr">{axesCopy.description.fr}</p>
+          <p data-lang="en">{axesCopy.description.en}</p>
         </Reveal>
 
         <div className="service-grid service-grid--poles">

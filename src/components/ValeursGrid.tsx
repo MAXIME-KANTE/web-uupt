@@ -4,6 +4,8 @@ import { gsap, ScrollTrigger, useGSAP } from '../lib/gsap'
 import { getLenis } from '../lib/smoothScroll'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import GsapWords from './motion/GsapWords'
+import type { TitleSegment } from './motion/GsapWords'
+import type { LocalizedText } from '../types'
 
 /** Une valeur du groupe — icône lucide + paires bilingues. */
 export interface Valeur {
@@ -16,11 +18,17 @@ export interface Valeur {
 
 interface ValeursGridProps {
   items: readonly Valeur[]
+  /** Sur-titre bilingue de la section (défaut : « Nos valeurs »). */
+  eyebrow?: LocalizedText
+  /** Titre bilingue révélé mot à mot (segments `ti` en italique éditoriale).
+   * Absent → la section n'affiche que le sur-titre. */
+  heading?: { fr: string | TitleSegment[]; en: string | TitleSegment[] }
 }
 
 /**
- * Section « Nos valeurs » — GRILLE STRUCTURÉE 3×2 (inspiration 21st.dev /
- * Framer), remplaçant l'ancien accordéon de piliers à libellés verticalisés :
+ * Section « grille de cartes sombres » — GRILLE STRUCTURÉE 3×2 (inspiration
+ * 21st.dev / Framer), remplaçant l'ancien accordéon de piliers à libellés
+ * verticalisés :
  *
  * - Grid 3 colonnes × 2 lignes sur desktop, 2 sur tablette, 1 sur mobile ;
  * - Cartes MINIMALISTES à fond sombre minéral (`bg-night`), bordure
@@ -34,7 +42,7 @@ interface ValeursGridProps {
  *
  * `prefers-reduced-motion` : aucun état posé, cartes visibles, statique.
  */
-export default function ValeursGrid({ items }: ValeursGridProps) {
+export default function ValeursGrid({ items, eyebrow, heading }: ValeursGridProps) {
   const root = useRef<HTMLDivElement | null>(null)
   const reduced = usePrefersReducedMotion()
 
@@ -72,18 +80,22 @@ export default function ValeursGrid({ items }: ValeursGridProps) {
     { scope: root, dependencies: [reduced] },
   )
 
+  const eyebrowCopy = eyebrow ?? { fr: 'Nos valeurs', en: 'Our values' }
+
   return (
-    <section className="section" aria-label="Nos valeurs">
+    <section className="section" aria-label={eyebrowCopy.fr}>
       <div className="container">
         <div ref={root}>
           <div className="section-heading">
-            <span className="eyebrow" data-lang="fr">Nos valeurs</span>
-            <span className="eyebrow" data-lang="en">Our values</span>
-            <GsapWords
-              fr={[{ t: 'Des valeurs solides, comme nos ' }, { t: 'fondations.', ti: true }]}
-              en={[{ t: 'Values as solid as our ' }, { t: 'foundations.', ti: true }]}
-              className="font-display text-3xl font-extrabold leading-tight tracking-tight text-ink md:text-4xl"
-            />
+            <span className="eyebrow" data-lang="fr">{eyebrowCopy.fr}</span>
+            <span className="eyebrow" data-lang="en">{eyebrowCopy.en}</span>
+            {heading && (
+              <GsapWords
+                fr={heading.fr}
+                en={heading.en}
+                className="font-display text-3xl font-extrabold leading-tight tracking-tight text-ink md:text-4xl"
+              />
+            )}
           </div>
 
           {/* Grille 3×2 aux espacements équilibrés — jamais de carré : les
