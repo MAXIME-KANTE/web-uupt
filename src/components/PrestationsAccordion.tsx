@@ -4,8 +4,10 @@ import { gsap, ScrollTrigger, useGSAP } from '../lib/gsap'
 import { getLenis } from '../lib/smoothScroll'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import GsapWords from './motion/GsapWords'
+import type { TitleSegment } from './motion/GsapWords'
+import type { LocalizedText } from '../types'
 
-/** Une prestation — même forme que les EXPERTISES des pages pôles. */
+/** Une prestation — même forme que les activités des axes (uuptData). */
 export interface Prestation {
   fr: string
   en: string
@@ -15,11 +17,16 @@ export interface Prestation {
 
 interface PrestationsAccordionProps {
   items: readonly Prestation[]
+  /** Sur-titre bilingue de la section (sert aussi d'aria-label). */
+  eyebrow: LocalizedText
+  /** Titre bilingue révélé mot à mot (segments `ti` en italique éditoriale). */
+  heading: { fr: string | TitleSegment[]; en: TitleSegment[] }
 }
 
 /**
- * Section « Nos prestations » — accordéon horizontal de cartes extensibles
- * (Expandable Hover Cards, style Framer / 21st.dev) :
+ * Section d'activités en accordéon horizontal de cartes extensibles
+ * (Expandable Hover Cards, style Framer / 21st.dev) — titre paramétré par la
+ * page (pages d'axes : « Activités de l'axe »), items = données uuptData :
  *
  * - Bandeau NUIT arrondi (halos décoratifs internes) qui donne au verre des
  *   cartes une matière à flouter : chaque carte `flex-1` en verre
@@ -38,7 +45,7 @@ interface PrestationsAccordionProps {
  * Mobile : la pile devient verticale (flex-col) — même mécanique, la carte
  * active grandit en hauteur. `prefers-reduced-motion` : aucune animation.
  */
-export default function PrestationsAccordion({ items }: PrestationsAccordionProps) {
+export default function PrestationsAccordion({ items, eyebrow, heading }: PrestationsAccordionProps) {
   const [active, setActive] = useState(0)
   const root = useRef<HTMLDivElement | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
@@ -91,7 +98,7 @@ export default function PrestationsAccordion({ items }: PrestationsAccordionProp
   }
 
   return (
-    <section className="section" aria-label="Nos prestations">
+    <section className="section" aria-label={eyebrow.fr}>
       <div className="container">
         {/* Panneau nuit : porte le titre et donne au verre des cartes un fond
             à flouter (halos internes, décoratifs). */}
@@ -116,17 +123,17 @@ export default function PrestationsAccordion({ items }: PrestationsAccordionProp
               className="text-xs font-semibold uppercase tracking-[0.3em] text-orange-400"
               data-lang="fr"
             >
-              Nos prestations
+              {eyebrow.fr}
             </span>
             <span
               className="text-xs font-semibold uppercase tracking-[0.3em] text-orange-400"
               data-lang="en"
             >
-              Our services
+              {eyebrow.en}
             </span>
             <GsapWords
-              fr={[{ t: 'Quatre savoir-faire, un même souci du ' }, { t: 'détail.', ti: true }]}
-              en={[{ t: 'Four areas of expertise, the same attention to ' }, { t: 'detail.', ti: true }]}
+              fr={heading.fr}
+              en={heading.en}
               className="max-w-3xl font-display text-3xl font-extrabold leading-tight tracking-tight text-white md:text-4xl"
             />
           </div>
