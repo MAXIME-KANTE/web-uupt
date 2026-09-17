@@ -4,9 +4,9 @@ type BrandLogoVariant = 'header' | 'drawer' | 'footer' | 'badge'
 type BrandLogoTone = 'light' | 'ink' | 'auto'
 
 /** Source unique du logo fourni dans le dossier public.
- *  TODO(UUPT) : produire les déclinaisons light/ink dédiées (spec §4 —
- *  logo `dame.png` + mot-symbole « UUPT ») ; les deux tons pointent
- *  provisoirement sur le même fichier. */
+ *  TODO(UUPT) : produire les déclinaisons light/ink dédiées (spec §4) —
+ *  en attendant, les deux tons pointent sur le même fichier `dame.png`
+ *  (mot-symbole « UUPT » porté par l'alt ci-dessous). */
 const TONE_SRC: Record<Exclude<BrandLogoTone, 'auto'>, string> = {
   light: '/dame.png',
   ink: '/dame.png',
@@ -62,7 +62,7 @@ export default function BrandLogo({
       {...props}
       className={base}
       src={TONE_SRC[resolved]}
-      alt="SALEEL GROUPE"
+      alt="Logo UUPT — Union des Universités Privées de Thiès"
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'auto'}
     />

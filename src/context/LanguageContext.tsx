@@ -9,7 +9,7 @@ interface LanguageContextValue {
   toggleLang: () => void
 }
 
-const STORAGE_KEY = 'saleel-lang'
+const STORAGE_KEY = 'uupt-lang'
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
 

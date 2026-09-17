@@ -15,7 +15,7 @@ const PRERENDERED =
   (window as { __PRERENDERED__?: boolean }).__PRERENDERED__ === true
 
 /**
- * Écran d'arrivée (preloader) — sigle SALEEL pulsé sur fond nuit.
+ * Écran d'arrivée (preloader) — sigle UUPT pulsé sur fond nuit.
  *
  * Il reflète le VRAI chargement des ressources critiques : polices,
  * décodage de la première image du hero et fenêtre complète. Deux garde-fous :
@@ -88,9 +88,7 @@ export default function Preloader() {
       <div className="preloader__mark">
         <BrandLogo className="preloader__logo" priority tone="light" />
       </div>
-      <p className="preloader__word">
-        SALEEL <span>GROUPE</span>
-      </p>
+      <p className="preloader__word">UUPT</p>
     </div>
   )
 }

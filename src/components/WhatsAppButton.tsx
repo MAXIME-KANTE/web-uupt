@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { organization } from '../data/uuptData'
 import WhatsAppIcon from './icons/WhatsAppIcon'
+
+/** Numéro WhatsApp officiel de l'Union (uuptData — placeholder tant que le
+ *  vrai numéro n'est pas communiqué ; ne jamais le coder en dur ici). */
+const WHATSAPP_HREF = `https://wa.me/${organization.whatsapp}?text=${encodeURIComponent(
+  `Bonjour ${organization.acronym}, j'aimerais discuter d'un projet`,
+).replace(/'/g, '%27')}`
 
 /**
  * Bouton WhatsApp flottant — rendu hors de .page-wrapper pour rester fixe
@@ -40,15 +47,17 @@ export default function WhatsAppButton() {
     }
   }, [pathname])
 
+  // aria-label est un attribut : la bascule FR/EN passe par useLanguage
+  // (les paires data-lang du CSS ne pilotent que le texte des éléments).
   return (
     <a
-      href="https://wa.me/221786879314?text=Bonjour%20SALEEL%20GROUPE%2C%20j%27aimerais%20discuter%20d%27un%20projet"
+      href={WHATSAPP_HREF}
       className={`whatsapp-float${parked ? ' is-parked' : ''}`}
       target="_blank"
       rel="noopener"
       aria-hidden={parked || undefined}
       tabIndex={parked ? -1 : undefined}
-      aria-label={lang === 'en' ? 'Chat on WhatsApp' : 'Discuter sur WhatsApp'}
+      aria-label={lang === 'en' ? 'Chat with UUPT on WhatsApp' : 'Contacter l’UUPT sur WhatsApp'}
     >
       <WhatsAppIcon />
     </a>
