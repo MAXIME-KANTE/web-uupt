@@ -3,56 +3,31 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Clock, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
-import { CONTACT_EMAIL } from '../constants'
+import { AXE_GALLERIES, CONTACT_EMAIL } from '../constants'
+import { contactFormCopy, organization, roleOptions } from '../data/uuptData'
+import type { ContactFormValues, SubmitStatus } from '../types'
 import BrandLogo from './BrandLogo'
 import HeroCarousel from './HeroCarousel'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
 /**
- * Diaporama du volet de marque : deux images par pôle (génie civil,
- * immobilier, comptabilité, numérique) en fondu automatique — le fond vit,
- * l'identité des quatre métiers reste présente derrière le texte.
+ * Diaporama du volet de marque : les images des trois axes (académique &
+ * culturel, innovation, sportif) en fondu automatique — le fond vit,
+ * l'identité des trois axes reste présente derrière le texte.
  */
 const BRAND_SLIDES: readonly string[] = [
-  '/genie-civil/benjamin-lehman-wgMEX8OK0PY-unsplash.webp',
-  '/immobilier/joao-emanuel-z849oJ33SdI-unsplash.webp',
-  '/comptabilite/analyse-graphiques.webp',
-  '/numerique/ben-kolde-bs2Ba7t69mM-unsplash.webp',
-  '/genie-civil/chris-robert-a6LCzq7G86A-unsplash.webp',
-  '/immobilier/jonathan-majam-hN-YvP7FZMg-unsplash.webp',
-  '/comptabilite/bureau-planification.webp',
-  '/numerique/christina-wocintechchat-com-m-6Dv3pe-JnSg-unsplash.webp',
+  ...AXE_GALLERIES['academique-culturel'],
+  ...AXE_GALLERIES.innovation,
+  ...AXE_GALLERIES.sportif,
 ]
 
-interface ContactFormState {
-  firstName: string
-  email: string
-  phone: string
-  projectType: string
-  message: string
-}
-
-const INITIAL_STATE: ContactFormState = {
-  firstName: '',
+const INITIAL_STATE: ContactFormValues = {
+  fullName: '',
   email: '',
-  phone: '',
-  projectType: '',
+  institution: '',
+  role: '',
   message: '',
 }
-
-interface PoleOption {
-  value: string
-  fr: string
-  en: string
-}
-
-const POLE_OPTIONS: readonly PoleOption[] = [
-  { value: 'Génie Civil & BTP', fr: 'Génie Civil & BTP', en: 'Civil Engineering & Construction' },
-  { value: 'Immobilier', fr: 'Immobilier', en: 'Real Estate' },
-  { value: 'Comptabilité & Gestion', fr: 'Comptabilité & Gestion', en: 'Accounting & Management' },
-  { value: 'Informatique & Numérique', fr: 'Informatique & Numérique', en: 'IT & Digital' },
-  { value: 'Autre', fr: 'Autre demande', en: 'Other request' },
-]
 
 /**
  * Envoi RÉEL depuis un site statique via FormSubmit (aucun backend à gérer,
@@ -78,19 +53,18 @@ function GoogleIcon() {
   )
 }
 
-type SubmitStatus = 'idle' | 'sending' | 'sent' | 'error'
-
 const WHATSAPP_HREF =
-  'https://wa.me/221786879314?text=' +
-  encodeURIComponent('Bonjour SALEEL GROUPE, je souhaite un devis pour…')
+  `https://wa.me/${organization.whatsapp}?text=` +
+  encodeURIComponent('Bonjour UUPT, je souhaite adhérer à l’Union / poser une question…')
 
 /**
- * Carte de contact « split » : volet gauche de marque (diaporama des pôles
+ * Carte de contact « split » : volet gauche de marque (diaporama des axes
  * sous voile nuit, logo, accroche, coordonnées, vague décorative) + volet
  * droit formulaire. Mobile : le volet de marque devient un bandeau compact.
  *
  * Soumission : POST AJAX FormSubmit → arrive directement sur CONTACT_EMAIL
- * (voir ci-dessus) ; états sending / sent / error avec repli mailto.
+ * (voir ci-dessus) ; états submitting / success / error avec repli mailto.
+ * Le succès redirige vers /merci (route dédiée, page ThankYouPage).
  * « Continuer avec Google » : pré-raccordé côté UI ; pour activer la vraie
  * connexion (récupérer nom + email du compte), brancher Google Identity
  * Services ici — le bouton affiche aujourd'hui un message de repli honnête.
@@ -98,7 +72,7 @@ const WHATSAPP_HREF =
 export default function ContactForm() {
   const { lang } = useLanguage()
   const navigate = useNavigate()
-  const [form, setForm] = useState<ContactFormState>(INITIAL_STATE)
+  const [form, setForm] = useState<ContactFormValues>(INITIAL_STATE)
   const [status, setStatus] = useState<SubmitStatus>('idle')
   const [googleNote, setGoogleNote] = useState(false)
   const [emailError, setEmailError] = useState(false)
@@ -112,7 +86,7 @@ export default function ContactForm() {
   }
 
   const handleChange =
-    (field: keyof ContactFormState) =>
+    (field: keyof ContactFormValues) =>
     (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       const value = event.target.value
       setForm((previous) => ({ ...previous, [field]: value }))
@@ -124,41 +98,44 @@ export default function ContactForm() {
 
   const validateForm = (): boolean => validateEmail(form.email)
 
+  /** Libellé de la qualité sélectionnée dans la langue courante (si choisie). */
+  const roleLabel = (): string | undefined =>
+    roleOptions.find((option) => option.value === form.role)?.label[lang]
+
+  /** Objet de l'email reçu par l'Union (et du mailto de repli). */
+  const buildSubject = (): string =>
+    lang === 'en'
+      ? `Contact request — ${roleLabel() ?? 'General'} — ${form.fullName}`
+      : `Demande de contact — ${roleLabel() ?? 'Général'} — ${form.fullName}`
+
   const buildMailto = (): string => {
-    const subject =
-      lang === 'en'
-        ? `Project request — ${form.projectType || 'General'} — ${form.firstName}`
-        : `Demande de projet — ${form.projectType || 'Général'} — ${form.firstName}`
     const body =
       lang === 'en'
-        ? `Name: ${form.firstName}\nEmail: ${form.email}\nPhone: ${form.phone}\nDivision: ${form.projectType}\n\nMessage:\n${form.message}`
-        : `Nom : ${form.firstName}\nEmail : ${form.email}\nTéléphone : ${form.phone}\nPôle : ${form.projectType}\n\nMessage :\n${form.message}`
-    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+        ? `Name: ${form.fullName}\nEmail: ${form.email}\nInstitution: ${form.institution}\nRole: ${roleLabel() ?? '—'}\n\nMessage:\n${form.message}`
+        : `Nom : ${form.fullName}\nEmail : ${form.email}\nÉtablissement : ${form.institution}\nQualité : ${roleLabel() ?? '—'}\n\nMessage :\n${form.message}`
+    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(buildSubject())}&body=${encodeURIComponent(body)}`
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!validateForm()) return
-    setStatus('sending')
+    setStatus('submitting')
 
     try {
       const response = await fetch(FORMSUBMIT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          _subject:
-            lang === 'en'
-              ? `Project request — ${form.projectType || 'General'} — ${form.firstName}`
-              : `Demande de projet — ${form.projectType || 'Général'} — ${form.firstName}`,
+          _subject: buildSubject(),
           _template: 'table',
           _captcha: 'false',
           _replyto: form.email,
           // Leurre antispam FormSubmit — les bots remplissent ce champ, pas les humains
           _honey: '',
-          Nom: form.firstName,
+          Nom: form.fullName,
           Email: form.email,
-          Téléphone: form.phone || '—',
-          Pôle: form.projectType || '—',
+          Établissement: form.institution || '—',
+          Qualité: roleOptions.find((option) => option.value === form.role)?.label.fr || '—',
           Message: form.message,
         }),
       })
@@ -167,7 +144,7 @@ export default function ContactForm() {
         .catch(() => ({}))
       const ok = response.ok && (data.success === true || data.success === 'true')
       if (!ok) throw new Error('formsubmit refused')
-      setStatus('sent')
+      setStatus('success')
       setForm(INITIAL_STATE)
       navigate('/merci')
     } catch {
@@ -180,7 +157,7 @@ export default function ContactForm() {
     <div className="contact-card">
       {/* ── Volet gauche : marque ─────────────────────────────────────── */}
       <aside className="contact-card__brand">
-        {/* Diaporama des pôles en fond (fondu auto, reduced-motion = figé),
+        {/* Diaporama des axes en fond (fondu auto, reduced-motion = figé),
             sous un voile nuit qui garantit la lisibilité du texte. */}
         <div className="contact-card__slides" aria-hidden="true">
           {/* Vignette ~40vw du volet de marque sur desktop : ne pas télécharger
@@ -211,33 +188,28 @@ export default function ContactForm() {
           <span data-lang="fr">Contact</span>
           <span data-lang="en">Contact</span>
         </p>
-        <h2 className="contact-card__title" data-lang="fr">Parlons de<br />votre projet.</h2>
-        <h2 className="contact-card__title" data-lang="en">Let's talk about<br />your project.</h2>
-        <p className="contact-card__text" data-lang="fr">
-          Un chantier à superviser, un bien à acquérir, des comptes à reprendre ou une idée
-          numérique à lancer : écrivez-nous, un interlocuteur dédié vous répond sous 24 h ouvrées.
-        </p>
-        <p className="contact-card__text" data-lang="en">
-          A site to supervise, a property to acquire, accounts to take over or a digital idea to
-          launch: write to us — a dedicated contact will reply within 24 working hours.
-        </p>
+        <h2 className="contact-card__title" data-lang="fr">Parlons de<br />votre demande.</h2>
+        <h2 className="contact-card__title" data-lang="en">Let's talk about<br />your request.</h2>
+        <p className="contact-card__text" data-lang="fr">{contactFormCopy.description.fr}</p>
+        <p className="contact-card__text" data-lang="en">{contactFormCopy.description.en}</p>
         <ul className="contact-card__channels">
           <li>
             <Mail size={15} aria-hidden="true" />
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            <a href={`mailto:${organization.email}`}>{organization.email}</a>
           </li>
           <li>
             <Phone size={15} aria-hidden="true" />
-            <a href="tel:+221786879314">+221 78 687 93 14</a>
+            <a href={`tel:${organization.phone.replace(/\s+/g, '')}`}>{organization.phone}</a>
           </li>
           <li>
             <MapPin size={15} aria-hidden="true" />
-            <span data-lang="fr">Thiès, Sénégal</span>
-            <span data-lang="en">Thiès, Senegal</span>
+            <span data-lang="fr">{organization.address.fr}</span>
+            <span data-lang="en">{organization.address.en}</span>
           </li>
         </ul>
 
-        {/* CTA WhatsApp direct : premier canal de conversion B2B au Sénégal. */}
+        {/* CTA WhatsApp direct : premier canal de conversion au Sénégal.
+            TODO(UUPT) : numéro provisoire (organization.whatsapp, uuptData). */}
         <div className="whatsapp-card">
           <WhatsAppIcon />
           <div>
@@ -256,23 +228,23 @@ export default function ContactForm() {
 
       {/* ── Volet droit : formulaire ──────────────────────────────────── */}
       <div className="contact-card__form">
-        <span className="eyebrow" data-lang="fr">Formulaire</span>
-        <span className="eyebrow" data-lang="en">Form</span>
-        <h2 className="contact-card__form-title" data-lang="fr">Décrivez-nous votre besoin</h2>
-        <h2 className="contact-card__form-title" data-lang="en">Tell us what you need</h2>
+        <span className="eyebrow" data-lang="fr">{contactFormCopy.badge.fr}</span>
+        <span className="eyebrow" data-lang="en">{contactFormCopy.badge.en}</span>
+        <h2 className="contact-card__form-title" data-lang="fr">{contactFormCopy.title.fr}</h2>
+        <h2 className="contact-card__form-title" data-lang="en">{contactFormCopy.title.en}</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-field">
-            <label htmlFor="firstName" data-lang="fr">Nom complet</label>
-            <label htmlFor="firstName" data-lang="en">Full name</label>
+            <label htmlFor="fullName" data-lang="fr">Nom complet</label>
+            <label htmlFor="fullName" data-lang="en">Full name</label>
             <input
               type="text"
-              id="firstName"
-              name="firstName"
+              id="fullName"
+              name="fullName"
               required
               autoComplete="name"
-              value={form.firstName}
-              onChange={handleChange('firstName')}
+              value={form.fullName}
+              onChange={handleChange('fullName')}
             />
           </div>
           <div className="form-field">
@@ -298,32 +270,32 @@ export default function ContactForm() {
             )}
           </div>
           <div className="form-field">
-            <label htmlFor="phone" data-lang="fr">Téléphone (optionnel)</label>
-            <label htmlFor="phone" data-lang="en">Phone (optional)</label>
+            <label htmlFor="institution" data-lang="fr">Établissement (optionnel)</label>
+            <label htmlFor="institution" data-lang="en">Institution (optional)</label>
             <input
-              type="tel"
-              id="phone"
-              name="phone"
-              autoComplete="tel"
-              value={form.phone}
-              onChange={handleChange('phone')}
+              type="text"
+              id="institution"
+              name="institution"
+              autoComplete="organization"
+              value={form.institution}
+              onChange={handleChange('institution')}
             />
           </div>
           <div className="form-field">
-            <label htmlFor="projectType" data-lang="fr">Pôle concerné (optionnel)</label>
-            <label htmlFor="projectType" data-lang="en">Relevant division (optional)</label>
+            <label htmlFor="role" data-lang="fr">Votre qualité (optionnel)</label>
+            <label htmlFor="role" data-lang="en">Your role (optional)</label>
             <select
-              id="projectType"
-              name="projectType"
-              value={form.projectType}
-              onChange={handleChange('projectType')}
+              id="role"
+              name="role"
+              value={form.role}
+              onChange={handleChange('role')}
             >
               {/* Les <option> ne peuvent pas être masquées par CSS ([data-lang]) :
                   le libellé est donc rendu selon la langue courante. */}
               <option value="">{lang === 'en' ? 'Select…' : 'Sélectionnez…'}</option>
-              {POLE_OPTIONS.map((option) => (
+              {roleOptions.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {lang === 'en' ? option.en : option.fr}
+                  {lang === 'en' ? option.label.en : option.label.fr}
                 </option>
               ))}
             </select>
@@ -341,17 +313,17 @@ export default function ContactForm() {
             />
           </div>
 
-          <button type="submit" className="button--submit" disabled={status === 'sending'}>
-            {status === 'sending' ? (
+          <button type="submit" className="button--submit" disabled={status === 'submitting'}>
+            {status === 'submitting' ? (
               <>
                 <span className="spinner" aria-hidden="true" />
-                <span data-lang="fr">Envoi en cours…</span>
-                <span data-lang="en">Sending…</span>
+                <span data-lang="fr">{contactFormCopy.submittingLabel.fr}</span>
+                <span data-lang="en">{contactFormCopy.submittingLabel.en}</span>
               </>
             ) : (
               <>
-                <span data-lang="fr">Envoyer le message</span>
-                <span data-lang="en">Send message</span>
+                <span data-lang="fr">{contactFormCopy.submitLabel.fr}</span>
+                <span data-lang="en">{contactFormCopy.submitLabel.en}</span>
                 <Send size={17} className="submit-icon" aria-hidden="true" />
               </>
             )}
@@ -384,16 +356,8 @@ export default function ContactForm() {
               </>
             )}
           </p>
-          <p className="contact-card__privacy" data-lang="fr">
-            Vos informations servent uniquement à traiter votre demande (transmises à
-            {` ${CONTACT_EMAIL}`} via un service d'acheminement) — rien n'est stocké ni réutilisé sur
-            ce site.
-          </p>
-          <p className="contact-card__privacy" data-lang="en">
-            Your details are only used to handle your request (forwarded to
-            {` ${CONTACT_EMAIL}`} through a delivery service) — nothing is stored or reused on this
-            site.
-          </p>
+          <p className="contact-card__privacy" data-lang="fr">{contactFormCopy.privacyNote.fr}</p>
+          <p className="contact-card__privacy" data-lang="en">{contactFormCopy.privacyNote.en}</p>
 
           <div className="contact-card__google">
             <p className="contact-card__google-or" aria-hidden="true">
