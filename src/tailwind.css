@@ -7,3 +7,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Semantic theme tokens: kept here because this Vite project has no globals.css. */
+@layer base {
+  :root {
+    --background: 72 18% 95%;
+    --foreground: 220 14% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 8%;
+    --primary: 72 100% 68%;
+    --primary-foreground: 220 14% 8%;
+    --muted: 75 14% 91%;
+    --muted-foreground: 220 9% 42%;
+    --border: 76 10% 83%;
+    --ring: 72 100% 42%;
+  }
+}

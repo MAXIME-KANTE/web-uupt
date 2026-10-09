@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+const srcPath = '/vercel/share/v0-project/src'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': srcPath,
+    },
+  },
   build: {
     rollupOptions: {
       output: {
