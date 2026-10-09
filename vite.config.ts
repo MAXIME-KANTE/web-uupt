@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-const srcPath = '/vercel/share/v0-project/src'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const srcPath = resolve(dirname(fileURLToPath(import.meta.url)), 'src')
 
 // https://vite.dev/config/
 export default defineConfig({

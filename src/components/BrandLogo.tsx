@@ -8,8 +8,8 @@ type BrandLogoTone = 'light' | 'ink' | 'auto'
  *  en attendant, les deux tons pointent sur le même fichier `dame.png`
  *  (mot-symbole « UUPT » porté par l'alt ci-dessous). */
 const TONE_SRC: Record<Exclude<BrandLogoTone, 'auto'>, string> = {
-  light: '/dame.png',
-  ink: '/dame.png',
+  light: '/images/uupt-logo.png',
+  ink: '/images/uupt-logo.png',
 }
 
 const VARIANT_DEFAULT_TONE: Record<BrandLogoVariant, BrandLogoTone> = {

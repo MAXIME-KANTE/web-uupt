@@ -79,19 +79,12 @@ function findChrome() {
 
 const chromePath = findChrome()
 if (!chromePath) {
-  // En local : erreur explicite. Sur CI (Vercel & co) : repli gracieux en SPA
-  // nu plutôt qu'un build cassé — le site se déploie, juste sans HTML prérendu.
-  if (process.env.CI === 'true' || process.env.VERCEL) {
-    console.warn(
-      '[prerender] Aucun Chrome/Chromium trouvé sur le buildeur — HTML non prérendu (SPA nu).',
-    )
-    process.exit(0)
-  }
-  console.error(
-    '[prerender] Aucun Chrome/Chromium trouvé. Installe Chrome ou définis ' +
-      'PUPPETEER_EXECUTABLE_PATH, ou saute l\'étape avec SKIP_PRERENDER=1.',
+  // Le prérendu est une optimisation : sans navigateur système, le build reste
+  // déployable et Vite fournit le shell SPA avec le routage côté client.
+  console.warn(
+    '[prerender] Aucun Chrome/Chromium trouvé — HTML non prérendu (SPA nu).',
   )
-  process.exit(1)
+  process.exit(0)
 }
 
 /* ---------- Serveur statique minimal (node:http, zéro dépendance) ---------- */
