@@ -400,6 +400,12 @@ body { overflow-wrap: break-word; }
   display: block;
   height: auto;
   object-fit: contain;
+  /* Le fichier source est carré : le clip circulaire retire le fond blanc
+     sans altérer le sceau au centre. */
+  clip-path: circle(46% at 50% 50%);
+}
+.brand-logo__img {
+  clip-path: circle(46% at 50% 50%);
 }
 .brand-logo--header {
   height: min(84px, calc(var(--nav-h) - 1.25rem));
@@ -845,9 +851,30 @@ body { overflow-wrap: break-word; }
 }
 .hero--home {
   /* Habillage d'attente sous le carrousel (l'image de fond statique
-     « asso » a été retirée). */
+  « asso » a été retirée). */
   background: var(--bg-dark);
+  isolation: isolate;
+  }
+.hero--home::before,
+.hero--home::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  width: clamp(12rem, 24vw, 24rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: .22;
+  filter: blur(2px);
+  background: radial-gradient(circle, rgba(217, 255, 95, .48), transparent 68%);
+  animation: heroOrbFloat 10s ease-in-out infinite alternate;
 }
+.hero--home::before { top: 16%; left: -7%; }
+.hero--home::after { right: -8%; bottom: 8%; animation-delay: -4s; animation-duration: 13s; }
+@keyframes heroOrbFloat {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(3rem, -1.5rem, 0) scale(1.12); }
+  }
 
 /* ----- Contenu du hero d'accueil — centré, comme la cible visuelle ----- */
 .hero-content {
